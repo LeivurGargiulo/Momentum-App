@@ -11,7 +11,6 @@ import {
   DragOverlay,
 } from '@dnd-kit/core';
 import {
-  arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
@@ -23,7 +22,7 @@ import { CSS } from '@dnd-kit/utilities';
 import useStore from '../store/useStore';
 
 // Sortable Activity Item Component
-const SortableActivityItem = ({ activity, index, editingId, editingName, onStartEdit, onSaveEdit, onCancelEdit, onDelete, onEditingNameChange }) => {
+const SortableActivityItem = ({ activity, editingId, editingName, onStartEdit, onSaveEdit, onCancelEdit, onDelete, onEditingNameChange }) => {
   const {
     attributes,
     listeners,
@@ -115,7 +114,6 @@ const SortableActivityItem = ({ activity, index, editingId, editingName, onStart
 const ActivityManager = ({ isOpen, onClose }) => {
   const { t } = useTranslation();
   const { 
-    activities, 
     addActivity, 
     updateActivity, 
     deleteActivity, 

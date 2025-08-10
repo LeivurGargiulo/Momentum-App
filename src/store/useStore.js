@@ -241,7 +241,7 @@ const useStore = create((set, get) => ({
   },
   
   // Statistics helpers
-  getCompletionRate: (period = 'daily') => {
+  getCompletionRate: () => {
     const activities = get().activities;
     const dailyData = get().dailyData;
     
@@ -294,7 +294,6 @@ const useStore = create((set, get) => ({
     
     if (activities.length === 0) return 0;
     
-    const dateKeys = Object.keys(dailyData).sort().reverse();
     let streak = 0;
     
     // Check from today backwards

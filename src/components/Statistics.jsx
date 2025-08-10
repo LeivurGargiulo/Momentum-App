@@ -7,7 +7,7 @@ import ShareStats from './ShareStats';
 
 const Statistics = () => {
   const { t } = useTranslation();
-  const { activities, dailyData, getActivityStats, getCompletionRate, getCurrentStreak } = useStore();
+  const { activities, getActivityStats, getCompletionRate, getCurrentStreak } = useStore();
   const [timeRange, setTimeRange] = useState('daily');
 
   const sortedActivities = activities.sort((a, b) => a.order - b.order);

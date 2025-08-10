@@ -88,7 +88,6 @@ const SortableTodayActivityItem = ({ activity, isCompleted, onToggle }) => {
 const Today = () => {
   const { t } = useTranslation();
   const {
-    activities,
     currentDate,
     dailyData,
     toggleActivity,
