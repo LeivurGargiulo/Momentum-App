@@ -5,6 +5,10 @@ import Today from './components/Today';
 import Statistics from './components/Statistics';
 import Settings from './components/Settings';
 import Navigation from './components/Navigation';
+import PWAInstallPrompt from './components/PWAInstallPrompt';
+import OfflineIndicator from './components/OfflineIndicator';
+import UpdateNotification from './components/UpdateNotification';
+import PWATest from './components/PWATest';
 
 function App() {
   const { isOnboarded, initialize } = useStore();
@@ -30,7 +34,15 @@ function App() {
 
   // Show onboarding if not onboarded
   if (!isOnboarded) {
-    return <Onboarding />;
+    return (
+      <>
+        <Onboarding />
+        <PWAInstallPrompt />
+        <OfflineIndicator />
+        <UpdateNotification />
+        {import.meta.env.DEV && <PWATest />}
+      </>
+    );
   }
 
   // Render main app with navigation
@@ -51,6 +63,10 @@ function App() {
     <div className="App">
       {renderCurrentTab()}
       <Navigation currentTab={currentTab} onTabChange={setCurrentTab} />
+      <PWAInstallPrompt />
+      <OfflineIndicator />
+      <UpdateNotification />
+      {import.meta.env.DEV && <PWATest />}
     </div>
   );
 }
