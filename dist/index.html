@@ -3,11 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/pwa-icon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Momentum</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>Momentum - Daily Activity Tracker</title>
     
     <!-- PWA Meta Tags -->
-    <meta name="description" content="Track your daily activities and build momentum" />
+    <meta name="description" content="Track your daily activities and build momentum, one day at a time" />
     <meta name="theme-color" content="#3b82f6" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -15,6 +15,12 @@
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="msapplication-TileColor" content="#3b82f6" />
     <meta name="msapplication-tileImage" content="/pwa-icon.svg" />
+    <meta name="msapplication-config" content="none" />
+    
+    <!-- Prevent browser chrome in PWA mode -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
     
     <!-- Apple Touch Icons -->
     <link rel="apple-touch-icon" href="/pwa-192x192.png" />
@@ -28,8 +34,42 @@
     <!-- Preconnect to external resources -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <script type="module" crossorigin src="/assets/index-a38T8jB7.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-BGS8X98E.css">
+    
+    <!-- Prevent zoom on input focus -->
+    <style>
+      input[type="text"], input[type="email"], input[type="password"], textarea, select {
+        font-size: 16px !important;
+      }
+      
+      /* Prevent horizontal scroll */
+      html, body {
+        overflow-x: hidden;
+        max-width: 100vw;
+      }
+      
+      /* PWA specific styles */
+      @media screen and (display-mode: standalone) {
+        body {
+          -webkit-user-select: none;
+          -moz-user-select: none;
+               user-select: none;
+          -webkit-touch-callout: none;
+          -webkit-tap-highlight-color: transparent;
+        }
+      }
+      
+      /* Safe area handling for notched devices */
+      @supports (padding: max(0px)) {
+        body {
+          padding-left: max(0px, env(safe-area-inset-left));
+          padding-right: max(0px, env(safe-area-inset-right));
+          padding-top: max(0px, env(safe-area-inset-top));
+          padding-bottom: max(0px, env(safe-area-inset-bottom));
+        }
+      }
+    </style>
+    <script type="module" crossorigin src="/assets/index-BjJelWF1.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-B32Nk7i5.css">
   <link rel="manifest" href="/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/registerSW.js"></script></head>
   <body>
     <div id="root"></div>
