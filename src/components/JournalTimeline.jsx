@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BookOpen, Search, Calendar, Clock } from 'lucide-react';
 import { format } from 'date-fns';
+import { es as esLocale } from 'date-fns/locale';
 
 const JournalTimeline = ({ entries, onDateClick }) => {
   const { t } = useTranslation();
@@ -23,7 +24,9 @@ const JournalTimeline = ({ entries, onDateClick }) => {
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return format(date, 'MMM d, yyyy');
+    const currentLanguage = localStorage.getItem('momentum-language') || 'en';
+    const locale = currentLanguage === 'es' ? esLocale : undefined;
+    return format(date, t('dateNavigation.dateFormat'), { locale });
   };
 
   const getEntryPreview = (text) => {

@@ -386,6 +386,206 @@ The app uses nested translation keys for better organization:
 - `import.*` - Import/export and conflict resolution text
 - `reminders.*` - Reminders and notifications interface
 
+## Localization & Internationalization
+
+Momentum has been fully localized with comprehensive Spanish (Español) support and a robust internationalization system that makes it easy to add new languages.
+
+### Current Language Support
+
+- 🇺🇸 **English** (default) - Complete UI translation
+- 🇪🇸 **Spanish** (Español) - Complete UI translation with natural, consistent language
+
+### Spanish Localization Features
+
+#### Complete Coverage
+- ✅ **Navigation & UI**: All menus, buttons, and interface elements
+- ✅ **Onboarding**: Welcome screens, language selection, and setup process
+- ✅ **Daily Tracking**: Activity management, completion status, and notes
+- ✅ **Statistics**: Charts, labels, time ranges, and data presentation
+- ✅ **Settings**: All configuration options and data management
+- ✅ **Journal**: Daily reflection interface and timeline
+- ✅ **Mood & Energy**: Tracking interface and analytics
+- ✅ **Reminders**: Notification system and scheduling
+- ✅ **PWA Features**: Install prompts, offline indicators, and updates
+- ✅ **Error Messages**: All error handling and user feedback
+- ✅ **Default Activities**: Pre-configured activities in Spanish
+
+#### Language Consistency
+- **Informal "Tú" Form**: Uses consistent informal Spanish throughout the app
+- **Natural Language**: Clear, natural Spanish appropriate for a general audience
+- **Cultural Adaptation**: Proper date formatting and number conventions
+- **Technical Terms**: Consistent translation of technical and UI terms
+
+#### UI/UX Adaptations
+- **Responsive Design**: Layouts adapt to longer Spanish text
+- **Button Sizing**: Flexible button widths accommodate longer translations
+- **Text Wrapping**: Proper text wrapping for longer Spanish phrases
+- **Mobile Optimization**: Maintains mobile-first design in both languages
+
+### Adding New Languages
+
+The app uses `react-i18next` for internationalization with a structured approach:
+
+#### 1. Create Translation File
+Create a new translation file in `src/locales/` (e.g., `fr.json` for French):
+
+```json
+{
+  "navigation": {
+    "today": "Aujourd'hui",
+    "stats": "Statistiques",
+    "settings": "Paramètres"
+  },
+  "onboarding": {
+    "welcome": "Bienvenue sur Momentum",
+    "welcomeSubtitle": "Construisez votre élan, jour après jour"
+  }
+  // ... continue with all translation keys
+}
+```
+
+#### 2. Update i18n Configuration
+Add the new language to `src/i18n.js`:
+
+```javascript
+import frTranslations from './locales/fr.json';
+
+// In the resources object:
+resources: {
+  en: { translation: enTranslations },
+  es: { translation: esTranslations },
+  fr: { translation: frTranslations }  // Add new language
+}
+
+// Update getAvailableLanguages function:
+export const getAvailableLanguages = () => {
+  return [
+    { code: 'en', name: 'English', nativeName: 'English' },
+    { code: 'es', name: 'Spanish', nativeName: 'Español' },
+    { code: 'fr', name: 'French', nativeName: 'Français' }  // Add new language
+  ];
+};
+```
+
+#### 3. Update Store for Default Activities
+Add default activities for the new language in `src/store/useStore.js`:
+
+```javascript
+setupDefaultActivities: () => {
+  const currentLanguage = localStorage.getItem('momentum-language') || 'en';
+  
+  try {
+    if (currentLanguage === 'fr') {
+      const frTranslations = require('../locales/fr.json');
+      defaultActivities = frTranslations.defaultActivities;
+    }
+    // ... existing language handling
+  } catch (error) {
+    // Add fallback activities for new language
+    if (currentLanguage === 'fr') {
+      defaultActivities = [
+        'Prendre des médicaments',
+        'Exercice',
+        'Méditation',
+        // ... continue with all default activities
+      ];
+    }
+  }
+}
+```
+
+#### 4. Test Thoroughly
+- Test all UI elements in the new language
+- Verify date formatting works correctly
+- Check that default activities are created in the correct language
+- Test language switching functionality
+- Verify all error messages and notifications are translated
+
+### Translation Key Structure
+
+The app uses a hierarchical structure for translation keys:
+
+#### Core Sections
+- `navigation.*` - Main navigation and tabs
+- `onboarding.*` - Welcome screens and setup process
+- `dailyTracking.*` - Daily activity tracking interface
+- `statistics.*` - Statistics and analytics pages
+- `settings.*` - Settings and configuration
+- `journal.*` - Daily reflection journal
+- `energy.*` - Energy level tracking
+- `mood.*` - Mood tracking interface
+- `reminders.*` - Reminders and notifications
+- `pwa.*` - PWA-specific features
+
+#### Data Management
+- `messages.*` - Success and confirmation messages
+- `errors.*` - Error messages and validation
+- `import.*` - Data import/export and conflict resolution
+- `share.*` - Social sharing functionality
+
+#### Common Elements
+- `common.*` - Reusable UI elements
+- `about.*` - App information and credits
+- `dateNavigation.*` - Date formatting and navigation
+
+### Best Practices for Translations
+
+1. **Consistency**: Use consistent terminology throughout the app
+2. **Formality**: Choose formal or informal language and stick to it
+3. **Cultural Adaptation**: Adapt date formats, number conventions, and cultural references
+4. **Length Consideration**: Consider that translations may be longer or shorter than English
+5. **Testing**: Always test translations in the actual app interface
+6. **Fallbacks**: Provide fallback text for missing translation keys
+
+### Technical Implementation
+
+#### Language Detection
+The app uses multiple fallback methods for language detection:
+1. **localStorage**: Checks for saved language preference
+2. **Browser Language**: Falls back to browser's preferred language
+3. **Default**: Uses English as final fallback
+
+#### Date Localization
+Date formatting is handled with `date-fns` and locale support:
+```javascript
+import { format } from 'date-fns';
+import { es as esLocale } from 'date-fns/locale';
+
+const formatDate = (date) => {
+  const currentLanguage = localStorage.getItem('momentum-language') || 'en';
+  const locale = currentLanguage === 'es' ? esLocale : undefined;
+  return format(date, t('dateNavigation.dateFormat'), { locale });
+};
+```
+
+#### Language Persistence
+Language preferences are stored in localStorage and persist between sessions:
+```javascript
+const saveLanguage = (language) => {
+  localStorage.setItem('momentum-language', language);
+};
+```
+
+### Contributing Translations
+
+To contribute translations or improve existing ones:
+
+1. **Fork the repository**
+2. **Create/update translation files** in `src/locales/`
+3. **Test thoroughly** in the app interface
+4. **Follow the translation key structure** outlined above
+5. **Submit a pull request** with your changes
+
+### Quality Assurance
+
+All translations should be tested for:
+- ✅ Complete coverage of all UI elements
+- ✅ Proper grammar and spelling
+- ✅ Consistent terminology
+- ✅ Appropriate cultural adaptations
+- ✅ Responsive design compatibility
+- ✅ Error handling and edge cases
+
 ## Data Storage
 
 All user data is stored locally in the browser:
