@@ -25,6 +25,7 @@ import ActivityManager from './ActivityManager';
 import UpcomingReminders from './UpcomingReminders';
 import MoodSelector from './MoodSelector';
 import EnergySlider from './EnergySlider';
+import JournalEntry from './JournalEntry';
 
 // Sortable Activity Item Component for Today
 const SortableTodayActivityItem = ({ activity, isCompleted, onToggle }) => {
@@ -97,6 +98,7 @@ const Today = () => {
     updateNotes,
     updateMood,
     updateEnergy,
+    updateJournal,
     goToPreviousDay,
     goToNextDay,
     goToToday,
@@ -105,7 +107,7 @@ const Today = () => {
   } = useStore();
 
   const dateKey = format(currentDate, 'yyyy-MM-dd');
-  const currentData = dailyData[dateKey] || { completed: [], notes: '', mood: null, energy: null };
+  const currentData = dailyData[dateKey] || { completed: [], notes: '', mood: null, energy: null, journal: '' };
   const isToday = format(new Date(), 'yyyy-MM-dd') === dateKey;
 
   const [notes, setNotes] = useState(currentData.notes);
@@ -114,6 +116,7 @@ const Today = () => {
   const [activeId, setActiveId] = useState(null);
   const [selectedMood, setSelectedMood] = useState(currentData.mood);
   const [selectedEnergy, setSelectedEnergy] = useState(currentData.energy);
+  const [isJournalEditing, setIsJournalEditing] = useState(false);
 
   const sortedActivities = getSortedActivities();
 
@@ -143,6 +146,20 @@ const Today = () => {
   const handleEnergyChange = (energy) => {
     setSelectedEnergy(energy);
     updateEnergy(energy);
+  };
+
+  const handleJournalSave = async (journalText) => {
+    updateJournal(journalText);
+    setIsJournalEditing(false);
+  };
+
+  const handleJournalClear = () => {
+    updateJournal('');
+    setIsJournalEditing(false);
+  };
+
+  const handleJournalToggleEdit = () => {
+    setIsJournalEditing(!isJournalEditing);
   };
 
   const handleDragStart = (event) => {
@@ -371,30 +388,14 @@ const Today = () => {
           )}
         </div>
 
-        {/* Notes Section */}
-        <div className="card p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-              {t('dailyTracking.notes')}
-            </h2>
-            <button
-              onClick={handleSaveNotes}
-              disabled={isSavingNotes}
-              className="btn-primary px-3 py-1 text-sm flex items-center gap-1"
-            >
-              <Save className="w-4 h-4" />
-                             {isSavingNotes ? t('activityManager.saving') : t('dailyTracking.saveNotes')}
-            </button>
-          </div>
-          
-          <textarea
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-                          placeholder={t('dailyTracking.notesPlaceholder')}
-            className="input-field min-h-[120px] resize-none"
-            rows={5}
-          />
-        </div>
+        {/* Journal Entry Section */}
+        <JournalEntry
+          journalText={currentData.journal}
+          onSave={handleJournalSave}
+          onClear={handleJournalClear}
+          isEditing={isJournalEditing}
+          onToggleEdit={handleJournalToggleEdit}
+        />
       </div>
 
       {/* Floating Action Button */}

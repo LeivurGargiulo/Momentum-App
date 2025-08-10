@@ -160,7 +160,7 @@ const useStore = create((set, get) => ({
   
   updateMood: (mood) => {
     const dateKey = formatDateKey(get().currentDate);
-    const currentData = get().dailyData[dateKey] || { completed: [], notes: '', mood: null, energy: null };
+    const currentData = get().dailyData[dateKey] || { completed: [], notes: '', mood: null, energy: null, journal: '' };
     
     const updatedData = {
       ...currentData,
@@ -179,7 +179,7 @@ const useStore = create((set, get) => ({
   
   updateEnergy: (energy) => {
     const dateKey = formatDateKey(get().currentDate);
-    const currentData = get().dailyData[dateKey] || { completed: [], notes: '', mood: null, energy: null };
+    const currentData = get().dailyData[dateKey] || { completed: [], notes: '', mood: null, energy: null, journal: '' };
     
     const updatedData = {
       ...currentData,
@@ -196,9 +196,28 @@ const useStore = create((set, get) => ({
     saveDailyData(dateKey, updatedData);
   },
   
+  updateJournal: (journal) => {
+    const dateKey = formatDateKey(get().currentDate);
+    const currentData = get().dailyData[dateKey] || { completed: [], notes: '', mood: null, energy: null, journal: '' };
+    
+    const updatedData = {
+      ...currentData,
+      journal
+    };
+    
+    set(state => ({
+      dailyData: {
+        ...state.dailyData,
+        [dateKey]: updatedData
+      }
+    }));
+    
+    saveDailyData(dateKey, updatedData);
+  },
+  
   toggleActivity: (activityId) => {
     const dateKey = formatDateKey(get().currentDate);
-    const currentData = get().dailyData[dateKey] || { completed: [], notes: '', mood: null, energy: null };
+    const currentData = get().dailyData[dateKey] || { completed: [], notes: '', mood: null, energy: null, journal: '' };
     
     const isCompleted = currentData.completed.includes(activityId);
     const updatedCompleted = isCompleted
@@ -222,7 +241,7 @@ const useStore = create((set, get) => ({
   
   updateNotes: (notes) => {
     const dateKey = formatDateKey(get().currentDate);
-    const currentData = get().dailyData[dateKey] || { completed: [], notes: '', mood: null, energy: null };
+    const currentData = get().dailyData[dateKey] || { completed: [], notes: '', mood: null, energy: null, journal: '' };
     
     const updatedData = {
       ...currentData,
@@ -495,6 +514,89 @@ const useStore = create((set, get) => ({
       correlations: correlations.sort((a, b) => b.completionCount - a.completionCount),
       hasData: correlations.length > 0
     };
+  },
+  
+  // Get journal statistics and entries
+  getJournalStats: (timeRange = 'month') => {
+    const dailyData = get().dailyData;
+    const dateKeys = Object.keys(dailyData).sort().reverse();
+    
+    if (dateKeys.length === 0) return { entries: [], stats: {}, hasData: false };
+    
+    // Filter by time range
+    const now = new Date();
+    const filteredKeys = dateKeys.filter(dateKey => {
+      const date = new Date(dateKey);
+      if (timeRange === 'week') {
+        return date >= new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      } else if (timeRange === 'month') {
+        return date >= new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      }
+      return true; // all time
+    });
+    
+    const journalEntries = filteredKeys
+      .map(dateKey => ({
+        date: dateKey,
+        text: dailyData[dateKey].journal || '',
+        hasEntry: !!(dailyData[dateKey].journal && dailyData[dateKey].journal.trim())
+      }))
+      .filter(entry => entry.hasEntry);
+    
+    if (journalEntries.length === 0) return { entries: [], stats: {}, hasData: false };
+    
+    // Calculate statistics
+    const totalEntries = journalEntries.length;
+    const totalDays = filteredKeys.length;
+    const consistencyRate = totalDays > 0 ? (totalEntries / totalDays) * 100 : 0;
+    
+    // Calculate average entry length
+    const totalCharacters = journalEntries.reduce((sum, entry) => sum + entry.text.length, 0);
+    const avgEntryLength = totalCharacters / totalEntries;
+    
+    // Calculate word counts
+    const wordCounts = journalEntries.map(entry => 
+      entry.text.trim().split(/\s+/).filter(word => word.length > 0).length
+    );
+    const avgWordCount = wordCounts.reduce((sum, count) => sum + count, 0) / wordCounts.length;
+    
+    return {
+      entries: journalEntries,
+      stats: {
+        totalEntries,
+        totalDays,
+        consistencyRate,
+        avgEntryLength,
+        avgWordCount,
+        longestEntry: Math.max(...journalEntries.map(e => e.text.length)),
+        shortestEntry: Math.min(...journalEntries.map(e => e.text.length))
+      },
+      hasData: true
+    };
+  },
+  
+  // Search journal entries
+  searchJournalEntries: (searchTerm) => {
+    const dailyData = get().dailyData;
+    const dateKeys = Object.keys(dailyData).sort().reverse();
+    
+    if (!searchTerm || searchTerm.trim().length === 0) return [];
+    
+    const searchLower = searchTerm.toLowerCase();
+    
+    return dateKeys
+      .map(dateKey => ({
+        date: dateKey,
+        text: dailyData[dateKey].journal || '',
+        hasEntry: !!(dailyData[dateKey].journal && dailyData[dateKey].journal.trim())
+      }))
+      .filter(entry => entry.hasEntry && entry.text.toLowerCase().includes(searchLower))
+      .map(entry => ({
+        ...entry,
+        preview: entry.text.length > 100 
+          ? entry.text.substring(0, 100) + '...' 
+          : entry.text
+      }));
   },
   
   // Get share statistics data

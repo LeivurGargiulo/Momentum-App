@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { BarChart3, TrendingUp, Calendar, BarChart, Flame, Heart, Battery } from 'lucide-react';
+import { BarChart3, TrendingUp, Calendar, BarChart, Flame, Heart, Battery, BookOpen } from 'lucide-react';
 import { BarChart as RechartsBarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
 import useStore from '../store/useStore';
 import ShareStats from './ShareStats';
+import JournalTimeline from './JournalTimeline';
 
 const Statistics = () => {
   const { t } = useTranslation();
@@ -14,10 +15,13 @@ const Statistics = () => {
     getCurrentStreak,
     getMoodStats,
     getEnergyStats,
-    getMoodEnergyCorrelation
+    getMoodEnergyCorrelation,
+    getJournalStats,
+    setCurrentDate
   } = useStore();
   const [timeRange, setTimeRange] = useState('daily');
   const [moodEnergyTimeRange, setMoodEnergyTimeRange] = useState('week');
+  const [journalTimeRange, setJournalTimeRange] = useState('month');
 
   const sortedActivities = activities.sort((a, b) => a.order - b.order);
   const activityStats = getActivityStats();
@@ -28,6 +32,9 @@ const Statistics = () => {
   const moodStats = getMoodStats(moodEnergyTimeRange);
   const energyStats = getEnergyStats(moodEnergyTimeRange);
   const moodEnergyCorrelation = getMoodEnergyCorrelation();
+  
+  // Journal Statistics
+  const journalStats = getJournalStats(journalTimeRange);
 
   // Prepare data for charts
   const barChartData = activityStats.map(activity => ({
@@ -47,6 +54,12 @@ const Statistics = () => {
   ];
 
   const moodEnergyTimeRangeOptions = [
+    { value: 'week', label: t('statistics.week'), icon: Calendar },
+    { value: 'month', label: t('statistics.month'), icon: BarChart },
+    { value: 'all', label: t('statistics.allTime'), icon: TrendingUp },
+  ];
+
+  const journalTimeRangeOptions = [
     { value: 'week', label: t('statistics.week'), icon: Calendar },
     { value: 'month', label: t('statistics.month'), icon: BarChart },
     { value: 'all', label: t('statistics.allTime'), icon: TrendingUp },
@@ -114,6 +127,34 @@ const Statistics = () => {
                     className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                       moodEnergyTimeRange === option.value
                         ? 'bg-pink-600 text-white'
+                        : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                    }`}
+                  >
+                    <Icon className="w-4 h-4" />
+                    {option.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Journal Time Range Selector */}
+        <div className="card p-6 mb-6">
+          <div className="flex items-center gap-4">
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              {t('statistics.journalTimeRange')}
+            </span>
+            <div className="flex gap-2">
+              {journalTimeRangeOptions.map((option) => {
+                const Icon = option.icon;
+                return (
+                  <button
+                    key={option.value}
+                    onClick={() => setJournalTimeRange(option.value)}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      journalTimeRange === option.value
+                        ? 'bg-purple-600 text-white'
                         : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                     }`}
                   >
@@ -266,6 +307,56 @@ const Statistics = () => {
             </div>
             <div className="text-sm text-gray-500 dark:text-gray-400">
               {energyStats.hasData ? t('statistics.outOf5') : t('statistics.noData')}
+            </div>
+          </div>
+
+          {/* Journal Consistency */}
+          <div className="card p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center">
+                  <BookOpen className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 dark:text-white">
+                    {t('statistics.journalConsistency')}
+                  </h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    {journalTimeRange} {t('statistics.consistency')}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">
+              {journalStats.hasData ? journalStats.stats.consistencyRate.toFixed(1) : '--'}
+            </div>
+            <div className="text-sm text-gray-500 dark:text-gray-400">
+              {journalStats.hasData ? t('statistics.percent') : t('statistics.noData')}
+            </div>
+          </div>
+
+          {/* Total Journal Entries */}
+          <div className="card p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-indigo-100 dark:bg-indigo-900 rounded-lg flex items-center justify-center">
+                  <BookOpen className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 dark:text-white">
+                    {t('statistics.totalJournalEntries')}
+                  </h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    {journalTimeRange} {t('statistics.total')}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">
+              {journalStats.hasData ? journalStats.stats.totalEntries : '--'}
+            </div>
+            <div className="text-sm text-gray-500 dark:text-gray-400">
+              {journalStats.hasData ? t('statistics.entries') : t('statistics.noData')}
             </div>
           </div>
         </div>
@@ -486,6 +577,21 @@ const Statistics = () => {
             </div>
           )}
         </div>
+
+        {/* Journal Timeline */}
+        {journalStats.hasData && (
+          <div className="mt-6">
+            <JournalTimeline
+              entries={journalStats.entries}
+              onDateClick={(date) => {
+                // Navigate to the selected date
+                const selectedDate = new Date(date);
+                setCurrentDate(selectedDate);
+                // You could also add a callback to switch to the Today tab
+              }}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

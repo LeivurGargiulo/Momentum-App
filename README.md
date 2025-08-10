@@ -11,8 +11,10 @@ A mobile-first Progressive Web App (PWA) for tracking daily activities and build
 - ✅ **Activity Management**: Add, edit, delete, and reorder activities
 - ✅ **Daily Tracking**: Mark activities as complete for each day
 - ✅ **Mood & Energy Tracking**: Log daily mood and energy levels with intuitive UI
-- ✅ **Statistics & Analytics**: View completion rates, mood trends, and energy patterns
+- ✅ **Daily Reflection Journal**: Write and save daily reflections with character limits
+- ✅ **Statistics & Analytics**: View completion rates, mood trends, energy patterns, and journal insights
 - ✅ **Correlation Analysis**: See how activities affect your mood and energy
+- ✅ **Journal Timeline**: Browse and search past journal entries with timeline view
 - ✅ **Offline-First**: Works without internet connection
 - ✅ **Auto-Updates**: Notifies when new versions are available
 - ✅ **Multi-Language Support**: English and Spanish with easy language switching
@@ -68,6 +70,48 @@ Momentum now includes comprehensive mood and energy tracking features to help yo
 - **No Cloud Sync**: Your personal data never leaves your device
 - **Backup Included**: Mood and energy data is included in all data exports
 - **Complete Control**: You can clear all data including mood/energy tracking at any time
+
+## Daily Reflection Journal
+
+Momentum includes a comprehensive daily reflection journal feature to help you capture your thoughts, feelings, and daily experiences.
+
+### Journal Features
+
+- **500 Character Limit**: Quick, focused reflections that encourage concise writing
+- **Edit & Save**: Edit your journal entries anytime with automatic saving
+- **Character & Word Count**: Real-time feedback on your entry length
+- **Clear Functionality**: Option to clear entries with confirmation dialog
+- **Visual Feedback**: Color-coded character limits and validation
+
+### Journal Analytics
+
+- **Consistency Tracking**: See your journal writing consistency over time
+- **Entry Statistics**: View total entries, average length, and writing patterns
+- **Timeline View**: Browse past journal entries in a chronological timeline
+- **Search Functionality**: Search through your journal entries by keywords
+- **Quick Navigation**: Click on timeline entries to jump to specific dates
+
+### How It Works
+
+1. **Daily Writing**: On the Today screen, find the "Daily Reflection" section below your activities
+2. **Quick Entry**: Write your thoughts in the text area (up to 500 characters)
+3. **Save & Edit**: Click save to store your entry, or edit it later
+4. **View History**: Check the Statistics page to see your journal timeline
+5. **Search & Browse**: Use the search feature to find specific entries or browse by date
+
+### Journal Insights
+
+- **Writing Consistency**: Track how often you write journal entries
+- **Entry Patterns**: See your average entry length and writing habits
+- **Date Navigation**: Easily navigate to past dates to read or edit entries
+- **Data Persistence**: All journal data is included in backups and exports
+
+### Privacy & Security
+
+- **Local Storage**: All journal entries are stored locally on your device
+- **No Cloud Sync**: Your personal reflections never leave your device
+- **Backup Included**: Journal data is included in all data exports
+- **Complete Control**: Clear individual entries or all journal data at any time
 
 ## Data Backup & Restore
 
