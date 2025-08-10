@@ -51,7 +51,19 @@
     "totalActivities": "Total de Actividades",
     "completedActivities": "Actividades Completadas",
     "completionPercentage": "% de Completitud",
-    "noData": "No hay datos disponibles"
+    "noData": "No hay datos disponibles",
+    "shareStats": "Compartir Estadísticas",
+    "shareStatsTitle": "Comparte Tu Progreso",
+    "shareStatsDescription": "Comparte tus estadísticas de actividades con amigos y familia",
+    "copyToClipboard": "Copiar al Portapapeles",
+    "shareVia": "Compartir vía",
+    "statsCopied": "¡Estadísticas copiadas al portapapeles!",
+    "shareSuccess": "¡Estadísticas compartidas exitosamente!",
+    "shareError": "Error al compartir estadísticas",
+    "currentStreak": "Racha actual",
+    "days": "días",
+    "day": "día",
+    "noStreak": "Sin racha actual"
   },
   "settings": {
     "exportData": "Exportar Datos",
@@ -101,5 +113,14 @@
     "noActivitiesYet": "Aún no hay actividades",
     "confirmDelete": "¿Estás seguro que quieres eliminar esta actividad?",
     "saving": "Guardando..."
+  },
+  "share": {
+    "statsSummary": "En el último {{timeRange}}, completé {{completionRate}}% de mis actividades. Mi actividad más realizada fue '{{mostCompleted}}' y la menos realizada fue '{{leastCompleted}}'. {{streakText}} #MomentumApp",
+    "statsSummaryNoStreak": "En el último {{timeRange}}, completé {{completionRate}}% de mis actividades. Mi actividad más realizada fue '{{mostCompleted}}' y la menos realizada fue '{{leastCompleted}}'. #MomentumApp",
+    "timeRangeDaily": "día",
+    "timeRangeWeekly": "semana",
+    "timeRangeMonthly": "mes",
+    "streakText": "¡Actualmente en una racha de {{streak}} días!",
+    "streakTextOne": "¡Actualmente en una racha de {{streak}} día!"
   }
 }

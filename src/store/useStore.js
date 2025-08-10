@@ -287,6 +287,65 @@ const useStore = create((set, get) => ({
     })).sort((a, b) => b.count - a.count);
   },
   
+  // Calculate current streak
+  getCurrentStreak: () => {
+    const dailyData = get().dailyData;
+    const activities = get().activities;
+    
+    if (activities.length === 0) return 0;
+    
+    const dateKeys = Object.keys(dailyData).sort().reverse();
+    let streak = 0;
+    
+    // Check from today backwards
+    const today = new Date();
+    for (let i = 0; i < 365; i++) { // Check up to a year back
+      const checkDate = new Date(today);
+      checkDate.setDate(today.getDate() - i);
+      const dateKey = formatDateKey(checkDate);
+      
+      const dayData = dailyData[dateKey];
+      if (dayData && dayData.completed.length > 0) {
+        // If there's any completed activity on this day, count it as a streak day
+        streak++;
+      } else {
+        // If no completed activities, break the streak
+        break;
+      }
+    }
+    
+    return streak;
+  },
+  
+  // Get share statistics data
+  getShareStatsData: (timeRange = 'daily') => {
+    const activities = get().activities;
+    const activityStats = get().getActivityStats();
+    const completionRate = get().getCompletionRate(timeRange);
+    const currentStreak = get().getCurrentStreak();
+    
+    if (activities.length === 0) {
+      return {
+        completionRate: 0,
+        mostCompleted: '',
+        leastCompleted: '',
+        currentStreak: 0,
+        hasData: false
+      };
+    }
+    
+    const mostCompleted = activityStats.length > 0 ? activityStats[0].name : '';
+    const leastCompleted = activityStats.length > 0 ? activityStats[activityStats.length - 1].name : '';
+    
+    return {
+      completionRate: Math.round(completionRate),
+      mostCompleted,
+      leastCompleted,
+      currentStreak,
+      hasData: true
+    };
+  },
+  
   // Setup default activities
   setupDefaultActivities: () => {
     // Import default activities from the current language

@@ -1,17 +1,19 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { BarChart3, TrendingUp, Calendar, BarChart } from 'lucide-react';
+import { BarChart3, TrendingUp, Calendar, BarChart, Flame } from 'lucide-react';
 import { BarChart as RechartsBarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import useStore from '../store/useStore';
+import ShareStats from './ShareStats';
 
 const Statistics = () => {
   const { t } = useTranslation();
-  const { activities, dailyData, getActivityStats, getCompletionRate } = useStore();
+  const { activities, dailyData, getActivityStats, getCompletionRate, getCurrentStreak } = useStore();
   const [timeRange, setTimeRange] = useState('daily');
 
   const sortedActivities = activities.sort((a, b) => a.order - b.order);
   const activityStats = getActivityStats();
   const completionRate = getCompletionRate(timeRange);
+  const currentStreak = getCurrentStreak();
 
   // Prepare data for charts
   const barChartData = activityStats.map(activity => ({
@@ -43,36 +45,41 @@ const Statistics = () => {
           </p>
         </div>
 
-        {/* Time Range Selector */}
+        {/* Time Range Selector and Share Button */}
         <div className="card p-6 mb-6">
-          <div className="flex items-center gap-4">
-            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              Time Range:
-            </span>
-            <div className="flex gap-2">
-              {timeRangeOptions.map((option) => {
-                const Icon = option.icon;
-                return (
-                  <button
-                    key={option.value}
-                    onClick={() => setTimeRange(option.value)}
-                    className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      timeRange === option.value
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-                    }`}
-                  >
-                    <Icon className="w-4 h-4" />
-                    {option.label}
-                  </button>
-                );
-              })}
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-4">
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                Time Range:
+              </span>
+              <div className="flex gap-2">
+                {timeRangeOptions.map((option) => {
+                  const Icon = option.icon;
+                  return (
+                    <button
+                      key={option.value}
+                      onClick={() => setTimeRange(option.value)}
+                      className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                        timeRange === option.value
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                      }`}
+                    >
+                      <Icon className="w-4 h-4" />
+                      {option.label}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
+            
+            {/* Share Stats Button */}
+            <ShareStats timeRange={timeRange} />
           </div>
         </div>
 
         {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
           {/* Completion Rate */}
           <div className="card p-6">
             <div className="flex items-center justify-between mb-4">
@@ -92,6 +99,31 @@ const Statistics = () => {
             </div>
             <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">
               {completionRate.toFixed(1)}%
+            </div>
+          </div>
+
+          {/* Current Streak */}
+          <div className="card p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-orange-100 dark:bg-orange-900 rounded-lg flex items-center justify-center">
+                  <Flame className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 dark:text-white">
+                    {t('statistics.currentStreak')}
+                  </h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    Consecutive days
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="text-3xl font-bold text-orange-600 dark:text-orange-400">
+              {currentStreak}
+            </div>
+            <div className="text-sm text-gray-500 dark:text-gray-400">
+              {currentStreak === 1 ? t('statistics.day') : t('statistics.days')}
             </div>
           </div>
 

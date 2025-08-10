@@ -51,7 +51,19 @@
     "totalActivities": "Total Activities",
     "completedActivities": "Completed Activities",
     "completionPercentage": "Completion %",
-    "noData": "No data available"
+    "noData": "No data available",
+    "shareStats": "Share Stats",
+    "shareStatsTitle": "Share Your Progress",
+    "shareStatsDescription": "Share your activity statistics with friends and family",
+    "copyToClipboard": "Copy to Clipboard",
+    "shareVia": "Share via",
+    "statsCopied": "Statistics copied to clipboard!",
+    "shareSuccess": "Statistics shared successfully!",
+    "shareError": "Failed to share statistics",
+    "currentStreak": "Current streak",
+    "days": "days",
+    "day": "day",
+    "noStreak": "No current streak"
   },
   "settings": {
     "exportData": "Export Data",
@@ -101,5 +113,14 @@
     "noActivitiesYet": "No activities yet",
     "confirmDelete": "Are you sure you want to delete this activity?",
     "saving": "Saving..."
+  },
+  "share": {
+    "statsSummary": "In the past {{timeRange}}, I completed {{completionRate}}% of my activities. My most done activity was '{{mostCompleted}}' and my least done was '{{leastCompleted}}'. {{streakText}} #MomentumApp",
+    "statsSummaryNoStreak": "In the past {{timeRange}}, I completed {{completionRate}}% of my activities. My most done activity was '{{mostCompleted}}' and my least done was '{{leastCompleted}}'. #MomentumApp",
+    "timeRangeDaily": "day",
+    "timeRangeWeekly": "week",
+    "timeRangeMonthly": "month",
+    "streakText": "Currently on a {{streak}} day streak!",
+    "streakTextOne": "Currently on a {{streak}} day streak!"
   }
 }
