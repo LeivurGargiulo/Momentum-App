@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
+import { es as esLocale } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight, Calendar, CheckCircle, Circle, Save, Plus, GripVertical, Heart, Battery } from 'lucide-react';
 import {
   DndContext,
@@ -209,7 +210,9 @@ const Today = () => {
             <div className="flex items-center gap-2">
               <Calendar className="w-5 h-5 text-blue-600 dark:text-blue-400" />
               <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                {format(currentDate, t('dateNavigation.dateFormat'))}
+                {format(currentDate, t('dateNavigation.dateFormat'), { 
+                  locale: localStorage.getItem('momentum-language') === 'es' ? esLocale : undefined 
+                })}
               </h2>
               {isToday && (
                 <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs rounded-full">

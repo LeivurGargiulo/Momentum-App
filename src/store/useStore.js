@@ -632,34 +632,46 @@ const useStore = create((set, get) => ({
   setupDefaultActivities: () => {
     // Import default activities from the current language
     const currentLanguage = localStorage.getItem('momentum-language') || 'en';
-    let defaultActivities = [];
     
-    if (currentLanguage === 'es') {
-      defaultActivities = [
-        'Tomar medicación',
-        'Ejercicio',
-        'Meditación',
-        'Diario',
-        'Llamar a un amigo',
-        'Salir al exterior',
-        'Leer',
-        'Practicar gratitud',
-        'Comer comidas saludables',
-        'Dormir lo suficiente'
-      ];
-    } else {
-      defaultActivities = [
-        'Take medication',
-        'Exercise',
-        'Meditation',
-        'Journal',
-        'Call a friend',
-        'Go outside',
-        'Read',
-        'Practice gratitude',
-        'Eat healthy meals',
-        'Get enough sleep'
-      ];
+    // Import translation files based on language
+    let defaultActivities = [];
+    try {
+      if (currentLanguage === 'es') {
+        const esTranslations = require('../locales/es.json');
+        defaultActivities = esTranslations.defaultActivities;
+      } else {
+        const enTranslations = require('../locales/en.json');
+        defaultActivities = enTranslations.defaultActivities;
+      }
+    } catch (error) {
+      // Fallback to hardcoded activities if translation files can't be loaded
+      if (currentLanguage === 'es') {
+        defaultActivities = [
+          'Tomar medicación',
+          'Ejercicio',
+          'Meditación',
+          'Diario',
+          'Llamar a un amigo',
+          'Salir al exterior',
+          'Leer',
+          'Practicar gratitud',
+          'Comer comidas saludables',
+          'Dormir lo suficiente'
+        ];
+      } else {
+        defaultActivities = [
+          'Take medication',
+          'Exercise',
+          'Meditation',
+          'Journal',
+          'Call a friend',
+          'Go outside',
+          'Read',
+          'Practice gratitude',
+          'Eat healthy meals',
+          'Get enough sleep'
+        ];
+      }
     }
     
     const activities = defaultActivities.map((name, index) => ({
