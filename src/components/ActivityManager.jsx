@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Plus, Edit3, Trash2, X, Save, GripVertical } from 'lucide-react';
 import {
   DndContext,
@@ -112,6 +113,7 @@ const SortableActivityItem = ({ activity, index, editingId, editingName, onStart
 };
 
 const ActivityManager = ({ isOpen, onClose }) => {
+  const { t } = useTranslation();
   const { 
     activities, 
     addActivity, 
@@ -164,7 +166,7 @@ const ActivityManager = ({ isOpen, onClose }) => {
   };
 
   const handleDeleteActivity = (id) => {
-    if (window.confirm('Are you sure you want to delete this activity? This will remove it from future days but keep historical data.')) {
+    if (window.confirm(t('activityManager.confirmDelete'))) {
       deleteActivity(id);
     }
   };
@@ -203,104 +205,103 @@ const ActivityManager = ({ isOpen, onClose }) => {
           </button>
         </div>
 
+        {/* Content */}
         <div className="p-6 overflow-y-auto max-h-[calc(90vh-140px)]">
-          {/* Add New Activity */}
-          <div className="mb-6">
-            {!showAddForm ? (
-              <button
-                onClick={() => setShowAddForm(true)}
-                className="w-full flex items-center justify-center gap-2 p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-gray-600 dark:text-gray-400 hover:border-blue-500 dark:hover:border-blue-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-              >
-                <Plus className="w-5 h-5" />
-                <span className="font-medium">Add New Activity</span>
-              </button>
-            ) : (
-              <div className="space-y-3">
+          {/* Add Activity Form */}
+          {showAddForm ? (
+            <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-3">
+                {t('activityManager.addNewActivity')}
+              </h3>
+              <div className="flex gap-2 mb-3">
                 <input
                   type="text"
                   value={newActivityName}
                   onChange={(e) => setNewActivityName(e.target.value)}
-                  placeholder="Enter activity name..."
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder={t('activityManager.activityNamePlaceholder')}
+                  className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   onKeyPress={(e) => e.key === 'Enter' && handleAddActivity()}
                   autoFocus
                 />
-                <div className="flex gap-2">
-                  <button
-                    onClick={handleAddActivity}
-                    disabled={!newActivityName.trim()}
-                    className="flex-1 btn-primary py-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Add Activity
-                  </button>
-                  <button
-                    onClick={() => {
-                      setShowAddForm(false);
-                      setNewActivityName('');
-                    }}
-                    className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
-                  >
-                    Cancel
-                  </button>
-                </div>
+                <button
+                  onClick={handleAddActivity}
+                  disabled={!newActivityName.trim()}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {t('onboarding.addActivity')}
+                </button>
               </div>
-            )}
-          </div>
+              <button
+                onClick={() => setShowAddForm(false)}
+                className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+              >
+                {t('onboarding.cancel')}
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setShowAddForm(true)}
+              className="w-full mb-6 p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-gray-500 dark:text-gray-400 hover:border-blue-500 dark:hover:border-blue-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center justify-center gap-2"
+            >
+              <Plus className="w-5 h-5" />
+              {t('activityManager.addNewActivity')}
+            </button>
+          )}
 
           {/* Activities List */}
-          <div className="space-y-2">
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-3">
-              Your Activities ({sortedActivities.length})
-            </h3>
-            
-            {sortedActivities.length === 0 ? (
-              <p className="text-gray-500 dark:text-gray-400 text-center py-8">
-                No activities yet. Add your first activity above!
+          {sortedActivities.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-gray-500 dark:text-gray-400 mb-4">
+                {t('activityManager.noActivitiesYet')}
               </p>
-            ) : (
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragStart={handleDragStart}
-                onDragEnd={handleDragEnd}
+              <button
+                onClick={() => setShowAddForm(true)}
+                className="btn-primary flex items-center gap-2 mx-auto"
               >
-                <SortableContext
-                  items={sortedActivities.map(activity => activity.id)}
-                  strategy={verticalListSortingStrategy}
-                >
-                  <div className="space-y-2">
-                    {sortedActivities.map((activity, index) => (
-                      <SortableActivityItem
-                        key={activity.id}
-                        activity={activity}
-                        index={index}
-                        editingId={editingId}
-                        editingName={editingName}
-                        onStartEdit={handleStartEdit}
-                        onSaveEdit={handleSaveEdit}
-                        onCancelEdit={handleCancelEdit}
-                        onDelete={handleDeleteActivity}
-                        onEditingNameChange={(e) => setEditingName(e.target.value)}
-                      />
-                    ))}
+                <Plus className="w-4 h-4" />
+                {t('activityManager.addNewActivity')}
+              </button>
+            </div>
+          ) : (
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragStart={handleDragStart}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext
+                items={sortedActivities.map(activity => activity.id)}
+                strategy={verticalListSortingStrategy}
+              >
+                <div className="space-y-3">
+                  {sortedActivities.map((activity, index) => (
+                    <SortableActivityItem
+                      key={activity.id}
+                      activity={activity}
+                      index={index}
+                      editingId={editingId}
+                      editingName={editingName}
+                      onStartEdit={handleStartEdit}
+                      onSaveEdit={handleSaveEdit}
+                      onCancelEdit={handleCancelEdit}
+                      onDelete={handleDeleteActivity}
+                      onEditingNameChange={(e) => setEditingName(e.target.value)}
+                    />
+                  ))}
+                </div>
+              </SortableContext>
+
+              <DragOverlay>
+                {activeId ? (
+                  <div className="p-4 bg-white dark:bg-gray-700 rounded-lg shadow-lg border border-gray-200 dark:border-gray-600">
+                    <span className="text-gray-900 dark:text-white font-medium">
+                      {sortedActivities.find(activity => activity.id === activeId)?.name}
+                    </span>
                   </div>
-                </SortableContext>
-                
-                <DragOverlay>
-                  {activeId ? (
-                    <div className="flex items-center gap-3 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border-2 border-blue-300 dark:border-blue-600 shadow-lg">
-                      <div className="p-1 text-blue-400">
-                        <GripVertical className="w-4 h-4" />
-                      </div>
-                      <span className="text-blue-900 dark:text-blue-100 font-medium">
-                        {sortedActivities.find(activity => activity.id === activeId)?.name}
-                      </span>
-                    </div>
-                  ) : null}
-                </DragOverlay>
-              </DndContext>
-            )}
-          </div>
+                ) : null}
+              </DragOverlay>
+            </DndContext>
+          )}
         </div>
       </div>
     </div>

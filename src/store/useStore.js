@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 import { formatDateKey, loadActivities, saveActivities, loadDailyData, saveDailyData, loadSettings, saveSettings } from '../utils/storage';
-import { strings } from '../strings';
 
 const useStore = create((set, get) => ({
   // State
@@ -288,16 +287,107 @@ const useStore = create((set, get) => ({
     })).sort((a, b) => b.count - a.count);
   },
   
+  // Calculate current streak
+  getCurrentStreak: () => {
+    const dailyData = get().dailyData;
+    const activities = get().activities;
+    
+    if (activities.length === 0) return 0;
+    
+    const dateKeys = Object.keys(dailyData).sort().reverse();
+    let streak = 0;
+    
+    // Check from today backwards
+    const today = new Date();
+    for (let i = 0; i < 365; i++) { // Check up to a year back
+      const checkDate = new Date(today);
+      checkDate.setDate(today.getDate() - i);
+      const dateKey = formatDateKey(checkDate);
+      
+      const dayData = dailyData[dateKey];
+      if (dayData && dayData.completed.length > 0) {
+        // If there's any completed activity on this day, count it as a streak day
+        streak++;
+      } else {
+        // If no completed activities, break the streak
+        break;
+      }
+    }
+    
+    return streak;
+  },
+  
+  // Get share statistics data
+  getShareStatsData: (timeRange = 'daily') => {
+    const activities = get().activities;
+    const activityStats = get().getActivityStats();
+    const completionRate = get().getCompletionRate(timeRange);
+    const currentStreak = get().getCurrentStreak();
+    
+    if (activities.length === 0) {
+      return {
+        completionRate: 0,
+        mostCompleted: '',
+        leastCompleted: '',
+        currentStreak: 0,
+        hasData: false
+      };
+    }
+    
+    const mostCompleted = activityStats.length > 0 ? activityStats[0].name : '';
+    const leastCompleted = activityStats.length > 0 ? activityStats[activityStats.length - 1].name : '';
+    
+    return {
+      completionRate: Math.round(completionRate),
+      mostCompleted,
+      leastCompleted,
+      currentStreak,
+      hasData: true
+    };
+  },
+  
   // Setup default activities
   setupDefaultActivities: () => {
-    const defaultActivities = strings.defaultActivities.map((name, index) => ({
+    // Import default activities from the current language
+    const currentLanguage = localStorage.getItem('momentum-language') || 'en';
+    let defaultActivities = [];
+    
+    if (currentLanguage === 'es') {
+      defaultActivities = [
+        'Tomar medicación',
+        'Ejercicio',
+        'Meditación',
+        'Diario',
+        'Llamar a un amigo',
+        'Salir al exterior',
+        'Leer',
+        'Practicar gratitud',
+        'Comer comidas saludables',
+        'Dormir lo suficiente'
+      ];
+    } else {
+      defaultActivities = [
+        'Take medication',
+        'Exercise',
+        'Meditation',
+        'Journal',
+        'Call a friend',
+        'Go outside',
+        'Read',
+        'Practice gratitude',
+        'Eat healthy meals',
+        'Get enough sleep'
+      ];
+    }
+    
+    const activities = defaultActivities.map((name, index) => ({
       id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
       name,
       order: index
     }));
     
-    set({ activities: defaultActivities, isOnboarded: true });
-    saveActivities(defaultActivities);
+    set({ activities, isOnboarded: true });
+    saveActivities(activities);
   }
 }));
 

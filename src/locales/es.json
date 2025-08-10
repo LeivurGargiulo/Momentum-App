@@ -1,0 +1,126 @@
+{
+  "navigation": {
+    "today": "Hoy",
+    "stats": "Estadísticas",
+    "settings": "Configuración"
+  },
+  "onboarding": {
+    "welcome": "Bienvenido a Momentum",
+    "welcomeSubtitle": "Construye momentum, un día a la vez",
+    "getStarted": "Comenzar",
+    "addActivity": "Añadir Actividad",
+    "editActivity": "Editar Actividad",
+    "activityName": "Nombre de la Actividad",
+    "saveActivity": "Guardar Actividad",
+    "deleteActivity": "Eliminar Actividad",
+    "cancel": "Cancelar"
+  },
+  "defaultActivities": [
+    "Tomar medicación",
+    "Ejercicio",
+    "Meditación",
+    "Diario",
+    "Llamar a un amigo",
+    "Salir al exterior",
+    "Leer",
+    "Practicar gratitud",
+    "Comer comidas saludables",
+    "Dormir lo suficiente"
+  ],
+  "dailyTracking": {
+    "todayActivities": "Actividades de Hoy",
+    "noActivities": "No hay actividades para hoy",
+    "markComplete": "Marcar como completado",
+    "markIncomplete": "Marcar como incompleto",
+    "notes": "Notas",
+    "notesPlaceholder": "¿Cómo te sientes hoy? Cualquier pensamiento o reflexión...",
+    "saveNotes": "Guardar Notas"
+  },
+  "dateNavigation": {
+    "previousDay": "Día anterior",
+    "nextDay": "Día siguiente",
+    "dateFormat": "d 'de' MMMM, yyyy"
+  },
+  "statistics": {
+    "completionRate": "Tasa de Completitud",
+    "daily": "Diario",
+    "weekly": "Semanal",
+    "monthly": "Mensual",
+    "mostCompleted": "Más Completadas",
+    "leastCompleted": "Menos Completadas",
+    "totalActivities": "Total de Actividades",
+    "completedActivities": "Actividades Completadas",
+    "completionPercentage": "% de Completitud",
+    "noData": "No hay datos disponibles",
+    "shareStats": "Compartir Estadísticas",
+    "shareStatsTitle": "Comparte Tu Progreso",
+    "shareStatsDescription": "Comparte tus estadísticas de actividades con amigos y familia",
+    "copyToClipboard": "Copiar al Portapapeles",
+    "shareVia": "Compartir vía",
+    "statsCopied": "¡Estadísticas copiadas al portapapeles!",
+    "shareSuccess": "¡Estadísticas compartidas exitosamente!",
+    "shareError": "Error al compartir estadísticas",
+    "currentStreak": "Racha actual",
+    "days": "días",
+    "day": "día",
+    "noStreak": "Sin racha actual"
+  },
+  "settings": {
+    "exportData": "Exportar Datos",
+    "importData": "Importar Datos",
+    "clearData": "Borrar Todos los Datos",
+    "darkMode": "Modo Oscuro",
+    "lightMode": "Modo Claro",
+    "about": "Acerca de",
+    "version": "Versión 2.0.0",
+    "language": "Idioma",
+    "english": "English",
+    "spanish": "Español"
+  },
+  "messages": {
+    "dataExported": "Datos exportados exitosamente",
+    "dataImported": "Datos importados exitosamente",
+    "dataCleared": "Todos los datos han sido borrados",
+    "confirmClearData": "¿Estás seguro de que quieres borrar todos los datos? Esto no se puede deshacer.",
+    "activityAdded": "Actividad añadida exitosamente",
+    "activityUpdated": "Actividad actualizada exitosamente",
+    "activityDeleted": "Actividad eliminada exitosamente",
+    "notesSaved": "Notas guardadas exitosamente"
+  },
+  "errors": {
+    "errorLoadingData": "Error al cargar datos",
+    "errorSavingData": "Error al guardar datos",
+    "errorExportingData": "Error al exportar datos",
+    "errorImportingData": "Error al importar datos"
+  },
+  "about": {
+    "appDescription": "Momentum te ayuda a construir hábitos positivos y rastrear tu progreso diario. Construye momentum, un día a la vez.",
+    "madeWith": "Hecho con ❤️ para una mejor salud mental"
+  },
+  "pwa": {
+    "installTitle": "Instalar Momentum",
+    "installDescription": "Añade a tu pantalla de inicio para acceso rápido y uso sin conexión",
+    "install": "Instalar",
+    "maybeLater": "Quizás después",
+    "offline": "Sin conexión",
+    "updateAvailable": "Actualización Disponible",
+    "updateDescription": "Una nueva versión está lista para instalar",
+    "refresh": "Actualizar"
+  },
+  "activityManager": {
+    "addNewActivity": "Añadir una nueva actividad",
+    "activityNamePlaceholder": "Ingresa el nombre de la actividad...",
+    "noActivitiesYet": "Aún no hay actividades",
+    "confirmDelete": "¿Estás seguro que quieres eliminar esta actividad?",
+    "saving": "Guardando..."
+  },
+  "share": {
+    "statsSummary": "En el último {{timeRange}}, completé {{completionRate}}% de mis actividades. Mi actividad más realizada fue '{{mostCompleted}}' y la menos realizada fue '{{leastCompleted}}'. {{streakText}} #MomentumApp",
+    "statsSummaryNoStreak": "En el último {{timeRange}}, completé {{completionRate}}% de mis actividades. Mi actividad más realizada fue '{{mostCompleted}}' y la menos realizada fue '{{leastCompleted}}'. #MomentumApp",
+    "timeRangeDaily": "día",
+    "timeRangeWeekly": "semana",
+    "timeRangeMonthly": "mes",
+    "streakText": "¡Actualmente en una racha de {{streak}} días!",
+    "streakTextOne": "¡Actualmente en una racha de {{streak}} día!"
+  }
+}
