@@ -1,15 +1,19 @@
 import { useState, useRef } from 'react';
-import { Moon, Sun, Download, Upload, Trash2, Heart, Info } from 'lucide-react';
+import { Moon, Sun, Download, Upload, Trash2, Heart, Info, Settings as SettingsIcon } from 'lucide-react';
 import useStore from '../store/useStore';
 import { exportData, importData, clearAllData } from '../utils/storage';
 import { strings } from '../strings';
+import ActivityManager from './ActivityManager';
 
 const Settings = () => {
-  const { settings, toggleDarkMode } = useStore();
+  const { settings, toggleDarkMode, getSortedActivities } = useStore();
   const [isExporting, setIsExporting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
   const [isClearing, setIsClearing] = useState(false);
+  const [showActivityManager, setShowActivityManager] = useState(false);
   const fileInputRef = useRef(null);
+
+  const sortedActivities = getSortedActivities();
 
   const handleExport = () => {
     setIsExporting(true);
@@ -21,7 +25,7 @@ const Settings = () => {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `activity-tracker-backup-${new Date().toISOString().split('T')[0]}.json`;
+        a.download = `momentum-backup-${new Date().toISOString().split('T')[0]}.json`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -102,8 +106,31 @@ const Settings = () => {
             {strings.settings}
           </h1>
           <p className="text-gray-600 dark:text-gray-300">
-            Customize your experience
+            Customize your Momentum experience
           </p>
+        </div>
+
+        {/* Activity Management */}
+        <div className="card p-6 mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <SettingsIcon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+              <div>
+                <h3 className="font-semibold text-gray-900 dark:text-white">
+                  Manage Activities
+                </h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  {sortedActivities.length} activities configured
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => setShowActivityManager(true)}
+              className="btn-primary px-4 py-2 text-sm"
+            >
+              Manage
+            </button>
+          </div>
         </div>
 
         {/* Dark Mode Toggle */}
@@ -240,19 +267,25 @@ const Settings = () => {
           </div>
           
           <div className="space-y-3 text-sm text-gray-600 dark:text-gray-300">
-            <p>{strings.appDescription}</p>
+            <p>Momentum helps you build positive habits and track your daily progress. Build momentum, one day at a time.</p>
             <div className="flex items-center justify-between pt-3 border-t border-gray-200 dark:border-gray-700">
               <span className="text-xs text-gray-500 dark:text-gray-400">
-                {strings.version}
+                Version 2.0.0
               </span>
               <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
                 <Heart className="w-3 h-3 text-red-500" />
-                <span>{strings.madeWith}</span>
+                <span>Made with love</span>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Activity Manager Modal */}
+      <ActivityManager 
+        isOpen={showActivityManager} 
+        onClose={() => setShowActivityManager(false)} 
+      />
     </div>
   );
 };

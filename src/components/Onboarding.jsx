@@ -1,44 +1,14 @@
 import { useState } from 'react';
-import { Check, Plus, Edit, Trash2, ArrowRight } from 'lucide-react';
+import { Check, Plus, ArrowRight } from 'lucide-react';
 import useStore from '../store/useStore';
 import { strings } from '../strings';
+import ActivityManager from './ActivityManager';
 
 const Onboarding = () => {
-  const { activities, addActivity, updateActivity, deleteActivity, setupDefaultActivities } = useStore();
-  const [newActivityName, setNewActivityName] = useState('');
-  const [editingId, setEditingId] = useState(null);
-  const [editingName, setEditingName] = useState('');
+  const { activities, setupDefaultActivities, getSortedActivities } = useStore();
+  const [showActivityManager, setShowActivityManager] = useState(false);
 
-  const handleAddActivity = () => {
-    if (newActivityName.trim()) {
-      addActivity(newActivityName.trim());
-      setNewActivityName('');
-    }
-  };
-
-  const handleStartEditing = (activity) => {
-    setEditingId(activity.id);
-    setEditingName(activity.name);
-  };
-
-  const handleSaveEdit = () => {
-    if (editingName.trim()) {
-      updateActivity(editingId, editingName.trim());
-      setEditingId(null);
-      setEditingName('');
-    }
-  };
-
-  const handleCancelEdit = () => {
-    setEditingId(null);
-    setEditingName('');
-  };
-
-  const handleDelete = (id) => {
-    if (window.confirm('Are you sure you want to delete this activity?')) {
-      deleteActivity(id);
-    }
-  };
+  const sortedActivities = getSortedActivities();
 
   const handleUseDefaults = () => {
     setupDefaultActivities();
@@ -49,16 +19,19 @@ const Onboarding = () => {
       <div className="max-w-md mx-auto">
         {/* Header */}
         <div className="text-center mb-8 pt-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            {strings.welcome}
+          <h1 className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">
+            Momentum
           </h1>
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+            {strings.welcome}
+          </h2>
           <p className="text-gray-600 dark:text-gray-300">
             {strings.welcomeSubtitle}
           </p>
         </div>
 
         {/* Quick Setup */}
-        {activities.length === 0 && (
+        {sortedActivities.length === 0 && (
           <div className="card p-6 mb-6">
             <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
               Quick Setup
@@ -76,109 +49,77 @@ const Onboarding = () => {
           </div>
         )}
 
-        {/* Add New Activity */}
+        {/* Activities Summary */}
         <div className="card p-6 mb-6">
-          <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
-            {strings.addActivity}
-          </h2>
-          <div className="flex gap-2">
-            <input
-              type="text"
-              value={newActivityName}
-              onChange={(e) => setNewActivityName(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleAddActivity()}
-              placeholder="Enter activity name..."
-              className="input-field flex-1"
-            />
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+              Your Activities ({sortedActivities.length})
+            </h2>
             <button
-              onClick={handleAddActivity}
-              disabled={!newActivityName.trim()}
-              className="btn-primary px-4 disabled:opacity-50 disabled:cursor-not-allowed"
+              onClick={() => setShowActivityManager(true)}
+              className="btn-primary px-4 py-2 text-sm flex items-center gap-2"
             >
-              <Plus className="w-5 h-5" />
+              <Plus className="w-4 h-4" />
+              Manage
             </button>
           </div>
-        </div>
-
-        {/* Activities List */}
-        <div className="card p-6 mb-6">
-          <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
-            Your Activities ({activities.length})
-          </h2>
           
-          {activities.length === 0 ? (
-            <p className="text-gray-500 dark:text-gray-400 text-center py-8">
-              No activities yet. Add some activities to get started!
-            </p>
+          {sortedActivities.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-gray-500 dark:text-gray-400 mb-4">
+                No activities yet. Add some activities to get started!
+              </p>
+              <button
+                onClick={() => setShowActivityManager(true)}
+                className="btn-primary flex items-center gap-2 mx-auto"
+              >
+                <Plus className="w-4 h-4" />
+                Add Your First Activity
+              </button>
+            </div>
           ) : (
-            <div className="space-y-3">
-              {activities.map((activity) => (
+            <div className="space-y-2">
+              {sortedActivities.slice(0, 3).map((activity) => (
                 <div
                   key={activity.id}
-                  className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
+                  className="flex items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
                 >
-                  {editingId === activity.id ? (
-                    <div className="flex items-center gap-2 flex-1">
-                      <input
-                        type="text"
-                        value={editingName}
-                        onChange={(e) => setEditingName(e.target.value)}
-                        onKeyPress={(e) => e.key === 'Enter' && handleSaveEdit()}
-                        className="input-field flex-1"
-                        autoFocus
-                      />
-                      <button
-                        onClick={handleSaveEdit}
-                        className="text-green-600 hover:text-green-700 p-1"
-                      >
-                        <Check className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={handleCancelEdit}
-                        className="text-gray-500 hover:text-gray-700 p-1"
-                      >
-                        <ArrowRight className="w-4 h-4" />
-                      </button>
-                    </div>
-                  ) : (
-                    <>
-                      <span className="text-gray-900 dark:text-white flex-1">
-                        {activity.name}
-                      </span>
-                      <div className="flex items-center gap-1">
-                        <button
-                          onClick={() => handleStartEditing(activity)}
-                          className="text-blue-600 hover:text-blue-700 p-1"
-                        >
-                          <Edit className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(activity.id)}
-                          className="text-red-600 hover:text-red-700 p-1"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </>
-                  )}
+                  <span className="text-gray-900 dark:text-white">
+                    {activity.name}
+                  </span>
                 </div>
               ))}
+              {sortedActivities.length > 3 && (
+                <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
+                  +{sortedActivities.length - 3} more activities
+                </p>
+              )}
             </div>
           )}
         </div>
 
         {/* Get Started Button */}
-        {activities.length > 0 && (
+        {sortedActivities.length > 0 && (
           <div className="text-center">
             <button
               onClick={() => window.location.reload()}
-              className="btn-primary px-8 py-3 text-lg"
+              className="btn-primary px-8 py-3 text-lg flex items-center gap-2 mx-auto"
             >
               {strings.getStarted}
+              <ArrowRight className="w-5 h-5" />
             </button>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+              You can always manage your activities later in Settings
+            </p>
           </div>
         )}
       </div>
+
+      {/* Activity Manager Modal */}
+      <ActivityManager 
+        isOpen={showActivityManager} 
+        onClose={() => setShowActivityManager(false)} 
+      />
     </div>
   );
 };
