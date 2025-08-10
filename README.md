@@ -1,6 +1,6 @@
 # Momentum - Activity Tracker PWA
 
-A mobile-first Progressive Web App (PWA) for tracking daily activities and building momentum. Built with React, Tailwind CSS, and designed to work entirely offline. Now with full localization support for English and Spanish.
+A mobile-first Progressive Web App (PWA) for tracking daily activities and building momentum. Built with React, Tailwind CSS, and designed to work entirely offline. Now with full localization support for English and Spanish and comprehensive data backup/restore functionality.
 
 ## Features
 
@@ -15,6 +15,8 @@ A mobile-first Progressive Web App (PWA) for tracking daily activities and build
 - ✅ **Auto-Updates**: Notifies when new versions are available
 - ✅ **Multi-Language Support**: English and Spanish with easy language switching
 - ✅ **Localization**: Complete UI translation with react-i18next
+- ✅ **Data Backup & Restore**: Full offline data export/import with conflict resolution
+- ✅ **Conflict Resolution**: Smart handling of data conflicts during import
 
 ## Languages Supported
 
@@ -24,6 +26,92 @@ A mobile-first Progressive Web App (PWA) for tracking daily activities and build
 ### Language Switching
 
 Users can easily switch between languages in the Settings page. The language preference is saved in localStorage and persists between sessions.
+
+## Data Backup & Restore
+
+Momentum includes comprehensive data backup and restore functionality that works entirely offline.
+
+### Exporting Your Data
+
+1. **Navigate to Settings**: Open the app and go to the Settings page
+2. **Export Data**: Tap the "Export Data" button in the Data Management section
+3. **Download**: A JSON file will be automatically downloaded with a timestamped filename (e.g., `momentum_backup_2025-01-15_14-30-25.json`)
+
+The exported file contains:
+- All your activities and their order
+- Complete daily tracking data with completion status and notes
+- App settings (dark mode, language preference)
+- Export metadata (timestamp, version, data summary)
+
+### Importing/Restoring Data
+
+1. **Navigate to Settings**: Open the app and go to the Settings page
+2. **Import Data**: Tap the "Import Data" button in the Data Management section
+3. **Select File**: Choose a previously exported JSON backup file
+4. **Resolve Conflicts**: If conflicts are detected, the app will guide you through resolution options
+
+### Conflict Resolution
+
+When importing data, Momentum intelligently detects and helps you resolve conflicts:
+
+#### Activity Conflicts
+- **Same ID**: When an imported activity has the same ID as an existing one
+- **Same Name**: When an imported activity has the same name as an existing one
+- **Resolution Options**:
+  - Skip imported activity (keep existing)
+  - Overwrite existing activity with imported data
+
+#### Daily Data Conflicts
+- **Same Date**: When you already have data for a specific date
+- **Resolution Options**:
+  - Skip imported data (keep existing)
+  - Overwrite existing data with imported data
+  - Merge data (combine completed activities and append notes)
+
+#### Settings Conflicts
+- **Existing Settings**: When you already have app settings configured
+- **Resolution Options**:
+  - Keep existing settings
+  - Overwrite with imported settings
+
+### Data Validation
+
+The app validates all imported files to ensure:
+- Valid JSON format
+- Required data structure
+- Proper data types
+- Export metadata integrity
+
+Invalid files will show a clear error message explaining the issue.
+
+### Backup Best Practices
+
+1. **Regular Backups**: Export your data weekly or monthly
+2. **Multiple Copies**: Keep backups in different locations (cloud storage, local files)
+3. **Test Restores**: Periodically test importing a backup to ensure it works
+4. **Version Compatibility**: Backups are compatible across app versions
+
+### File Format
+
+Backup files are standard JSON with the following structure:
+```json
+{
+  "activities": [...],
+  "dailyData": {...},
+  "settings": {...},
+  "exportDate": "2025-01-15T14:30:25.123Z",
+  "version": "2.0.0",
+  "appName": "Momentum",
+  "dataSummary": {
+    "totalActivities": 5,
+    "totalDays": 30,
+    "dateRange": {
+      "start": "2024-12-15",
+      "end": "2025-01-15"
+    }
+  }
+}
+```
 
 ## PWA Installation
 
@@ -82,6 +170,13 @@ The app uses react-i18next for internationalization. Key files:
 - `src/locales/es.json` - Spanish translations
 - `src/components/LanguageSwitcher.jsx` - Language switcher component
 
+### Data Management Development
+The app includes comprehensive data management utilities. Key files:
+
+- `src/utils/storage.js` - Core storage functions with export/import
+- `src/components/ImportConflictResolver.jsx` - Conflict resolution UI
+- `src/components/Settings.jsx` - Settings page with data management
+
 ## Adding New Languages
 
 To add support for a new language:
@@ -136,17 +231,23 @@ The app uses nested translation keys for better organization:
 - `errors.*` - Error messages
 - `pwa.*` - PWA-specific text
 - `activityManager.*` - Activity management interface
+- `import.*` - Import/export and conflict resolution text
 
 ## Data Storage
 
 All user data is stored locally in the browser:
 
-- **Activities**: List of user-defined activities
-- **Daily Data**: Completion status for each day
+- **Activities**: List of user-defined activities with IDs and order
+- **Daily Data**: Completion status and notes for each day
 - **Settings**: User preferences (dark mode, language, etc.)
 
 ### Data Export/Import
-The app supports data export and import via JSON files in the Settings section.
+The app supports comprehensive data export and import via JSON files in the Settings section, including:
+
+- **Smart Conflict Detection**: Automatically identifies data conflicts
+- **Flexible Resolution**: Multiple options for handling conflicts
+- **Data Validation**: Ensures backup file integrity
+- **Metadata Tracking**: Includes export timestamps and version info
 
 ## Deployment
 
@@ -171,6 +272,7 @@ The app works completely offline after the first load:
 - User data is stored in localStorage
 - No network requests required for core functionality
 - Automatic updates when connection is restored
+- Full backup/restore functionality works offline
 
 ## Browser Support
 

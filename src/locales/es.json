@@ -124,10 +124,14 @@
     "errorSavingData": "Error al guardar datos",
     "errorExportingData": "Error al exportar datos",
     "errorImportingData": "Error al importar datos",
-    "errorClearingData": "Error al borrar datos"
+    "errorClearingData": "Error al borrar datos",
+    "invalidBackupFile": "Archivo de respaldo inválido: {{error}}",
+    "errorReadingFile": "Error al leer archivo"
   },
   "common": {
-    "loading": "Cargando..."
+    "loading": "Cargando...",
+    "cancel": "Cancelar",
+    "processing": "Procesando..."
   },
   "about": {
     "appDescription": "Momentum te ayuda a construir hábitos positivos y rastrear tu progreso diario. Construye momentum, un día a la vez.",
@@ -158,5 +162,29 @@
     "timeRangeMonthly": "mes",
     "streakText": "¡Actualmente en una racha de {{streak}} días!",
     "streakTextOne": "¡Actualmente en una racha de {{streak}} día!"
+  },
+  "import": {
+    "resolveConflicts": "Resolver Conflictos de Importación",
+    "conflictsFound": "{{count}} conflictos encontrados",
+    "activityConflicts": "Conflictos de Actividades ({{count}})",
+    "dailyDataConflicts": "Conflictos de Datos Diarios ({{count}})",
+    "settingsConflicts": "Conflictos de Configuración",
+    "conflictSameId": "Existe una actividad con el mismo ID",
+    "conflictSameName": "Existe una actividad con el mismo nombre",
+    "conflictSameDate": "Ya existen datos para la misma fecha",
+    "conflictSettings": "Ya existen configuraciones",
+    "activityConflictDescription": "Una actividad con el mismo ID o nombre ya existe en tus datos.",
+    "dailyDataConflictDescription": "Ya tienes datos para {{date}}. Elige cómo manejar este conflicto.",
+    "settingsConflictDescription": "Ya tienes configuraciones configuradas. Elige si mantener las configuraciones existentes o sobrescribirlas.",
+    "existing": "Existente",
+    "imported": "Importado",
+    "completedActivities": "{{count}} actividades completadas",
+    "hasNotes": "Tiene notas",
+    "skipImported": "Omitir datos importados",
+    "overwriteExisting": "Sobrescribir datos existentes",
+    "mergeData": "Combinar datos (combinar actividades y notas)",
+    "keepExistingSettings": "Mantener configuraciones existentes",
+    "overwriteSettings": "Sobrescribir con configuraciones importadas",
+    "applyResolutions": "Aplicar Resoluciones"
   }
 }

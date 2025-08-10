@@ -1,21 +1,31 @@
 import { useState, useRef } from 'react';
-import { Moon, Sun, Download, Upload, Trash2, Heart, Info, Settings as SettingsIcon } from 'lucide-react';
+import { Moon, Sun, Download, Upload, Trash2, Heart, Info, Settings as SettingsIcon, AlertCircle, CheckCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import useStore from '../store/useStore';
-import { exportData, importData, clearAllData } from '../utils/storage';
+import { exportData, importData as importDataUtil, clearAllData, generateBackupFilename, validateBackupData, detectConflicts } from '../utils/storage';
 import ActivityManager from './ActivityManager';
 import LanguageSwitcher from './LanguageSwitcher';
+import ImportConflictResolver from './ImportConflictResolver';
 
 const Settings = () => {
   const { t } = useTranslation();
-  const { settings, toggleDarkMode, getSortedActivities } = useStore();
+  const { settings, toggleDarkMode, getSortedActivities, initialize } = useStore();
   const [isExporting, setIsExporting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
   const [isClearing, setIsClearing] = useState(false);
   const [showActivityManager, setShowActivityManager] = useState(false);
+  const [showConflictResolver, setShowConflictResolver] = useState(false);
+  const [importConflicts, setImportConflicts] = useState(null);
+  const [importData, setImportData] = useState(null);
+  const [notification, setNotification] = useState(null);
   const fileInputRef = useRef(null);
 
   const sortedActivities = getSortedActivities();
+
+  const showNotification = (type, message) => {
+    setNotification({ type, message });
+    setTimeout(() => setNotification(null), 5000);
+  };
 
   const handleExport = () => {
     setIsExporting(true);
@@ -27,20 +37,19 @@ const Settings = () => {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `momentum-backup-${new Date().toISOString().split('T')[0]}.json`;
+        a.download = generateBackupFilename();
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
         
-        // Show success message
-        alert(t('messages.dataExported'));
+        showNotification('success', t('messages.dataExported'));
       } else {
-        alert(t('errors.errorExportingData'));
+        showNotification('error', t('errors.errorExportingData'));
       }
     } catch (error) {
       console.error('Export error:', error);
-      alert(t('errors.errorExportingData'));
+      showNotification('error', t('errors.errorExportingData'));
     } finally {
       setIsExporting(false);
     }
@@ -59,23 +68,72 @@ const Settings = () => {
     const reader = new FileReader();
     reader.onload = (e) => {
       try {
-        const success = importData(e.target.result);
-        if (success) {
-          alert(t('messages.dataImported'));
-          window.location.reload(); // Reload to update the app state
+        // Validate the file content
+        const validation = validateBackupData(JSON.parse(e.target.result));
+        if (!validation.isValid) {
+          showNotification('error', t('errors.invalidBackupFile', { error: validation.error }));
+          setIsImporting(false);
+          return;
+        }
+
+        const data = JSON.parse(e.target.result);
+        
+        // Check for conflicts
+        const conflicts = detectConflicts(data);
+        const hasConflicts = conflicts.activities.length > 0 || conflicts.dailyData.length > 0 || conflicts.settings;
+
+        if (hasConflicts) {
+          // Show conflict resolver
+          setImportData(data);
+          setImportConflicts(conflicts);
+          setShowConflictResolver(true);
         } else {
-          alert(t('errors.errorImportingData'));
+          // No conflicts, import directly
+          performImport(data);
         }
       } catch (error) {
         console.error('Import error:', error);
-        alert(t('errors.errorImportingData'));
+        showNotification('error', t('errors.errorImportingData'));
       } finally {
         setIsImporting(false);
       }
     };
     
+    reader.onerror = () => {
+      showNotification('error', t('errors.errorReadingFile'));
+      setIsImporting(false);
+    };
+    
     reader.readAsText(file);
     event.target.value = ''; // Reset file input
+  };
+
+  const performImport = (data, conflictResolution = {}) => {
+    setIsImporting(true);
+    
+    try {
+      const result = importDataUtil(JSON.stringify(data), conflictResolution);
+      
+      if (result.success) {
+        // Reinitialize the store to load the new data
+        initialize();
+        showNotification('success', t('messages.dataImported'));
+      } else {
+        showNotification('error', t('errors.errorImportingData'));
+      }
+    } catch (error) {
+      console.error('Import error:', error);
+      showNotification('error', t('errors.errorImportingData'));
+    } finally {
+      setIsImporting(false);
+      setShowConflictResolver(false);
+      setImportData(null);
+      setImportConflicts(null);
+    }
+  };
+
+  const handleConflictResolution = async (resolutions) => {
+    await performImport(importData, resolutions);
   };
 
   const handleClearData = () => {
@@ -85,14 +143,15 @@ const Settings = () => {
       try {
         const success = clearAllData();
         if (success) {
-          alert(t('messages.dataCleared'));
-          window.location.reload(); // Reload to reset the app
+          showNotification('success', t('messages.dataCleared'));
+          // Reinitialize the store
+          initialize();
         } else {
-          alert(t('errors.errorClearingData'));
+          showNotification('error', t('errors.errorClearingData'));
         }
       } catch (error) {
         console.error('Clear error:', error);
-        alert(t('errors.errorClearingData'));
+        showNotification('error', t('errors.errorClearingData'));
       } finally {
         setIsClearing(false);
       }
@@ -101,6 +160,22 @@ const Settings = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20">
+      {/* Notification */}
+      {notification && (
+        <div className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-50 px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 ${
+          notification.type === 'success' 
+            ? 'bg-green-100 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-200'
+            : 'bg-red-100 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200'
+        }`}>
+          {notification.type === 'success' ? (
+            <CheckCircle className="w-5 h-5" />
+          ) : (
+            <AlertCircle className="w-5 h-5" />
+          )}
+          <span className="font-medium">{notification.message}</span>
+        </div>
+      )}
+
       <div className="max-w-md mx-auto px-4 py-6">
         {/* Header */}
         <div className="mb-6">
@@ -185,7 +260,7 @@ const Settings = () => {
             <button
               onClick={handleExport}
               disabled={isExporting}
-              className="w-full flex items-center justify-between p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
+              className="w-full flex items-center justify-between p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors disabled:opacity-50"
             >
               <div className="flex items-center gap-3">
                 <Download className="w-5 h-5 text-blue-600 dark:text-blue-400" />
@@ -209,7 +284,7 @@ const Settings = () => {
             <button
               onClick={handleImport}
               disabled={isImporting}
-              className="w-full flex items-center justify-between p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors"
+              className="w-full flex items-center justify-between p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors disabled:opacity-50"
             >
               <div className="flex items-center gap-3">
                 <Upload className="w-5 h-5 text-green-600 dark:text-green-400" />
@@ -233,7 +308,7 @@ const Settings = () => {
             <button
               onClick={handleClearData}
               disabled={isClearing}
-              className="w-full flex items-center justify-between p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors"
+              className="w-full flex items-center justify-between p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors disabled:opacity-50"
             >
               <div className="flex items-center gap-3">
                 <Trash2 className="w-5 h-5 text-red-600 dark:text-red-400" />
@@ -293,6 +368,19 @@ const Settings = () => {
         isOpen={showActivityManager} 
         onClose={() => setShowActivityManager(false)} 
       />
+
+      {/* Import Conflict Resolver Modal */}
+      {showConflictResolver && importConflicts && (
+        <ImportConflictResolver
+          conflicts={importConflicts}
+          onResolve={handleConflictResolution}
+          onCancel={() => {
+            setShowConflictResolver(false);
+            setImportData(null);
+            setImportConflicts(null);
+          }}
+        />
+      )}
     </div>
   );
 };

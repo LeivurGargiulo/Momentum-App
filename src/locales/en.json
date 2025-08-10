@@ -124,10 +124,14 @@
     "errorSavingData": "Error saving data",
     "errorExportingData": "Error exporting data",
     "errorImportingData": "Error importing data",
-    "errorClearingData": "Error clearing data"
+    "errorClearingData": "Error clearing data",
+    "invalidBackupFile": "Invalid backup file: {{error}}",
+    "errorReadingFile": "Error reading file"
   },
   "common": {
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "cancel": "Cancel",
+    "processing": "Processing..."
   },
   "about": {
     "appDescription": "Momentum helps you build positive habits and track your daily progress. Build momentum, one day at a time.",
@@ -158,5 +162,29 @@
     "timeRangeMonthly": "month",
     "streakText": "Currently on a {{streak}} day streak!",
     "streakTextOne": "Currently on a {{streak}} day streak!"
+  },
+  "import": {
+    "resolveConflicts": "Resolve Import Conflicts",
+    "conflictsFound": "{{count}} conflicts found",
+    "activityConflicts": "Activity Conflicts ({{count}})",
+    "dailyDataConflicts": "Daily Data Conflicts ({{count}})",
+    "settingsConflicts": "Settings Conflicts",
+    "conflictSameId": "Activity with same ID exists",
+    "conflictSameName": "Activity with same name exists",
+    "conflictSameDate": "Data for same date exists",
+    "conflictSettings": "Settings already exist",
+    "activityConflictDescription": "An activity with the same ID or name already exists in your data.",
+    "dailyDataConflictDescription": "You already have data for {{date}}. Choose how to handle this conflict.",
+    "settingsConflictDescription": "You already have settings configured. Choose whether to keep existing settings or overwrite them.",
+    "existing": "Existing",
+    "imported": "Imported",
+    "completedActivities": "{{count}} activities completed",
+    "hasNotes": "Has notes",
+    "skipImported": "Skip imported data",
+    "overwriteExisting": "Overwrite existing data",
+    "mergeData": "Merge data (combine activities and notes)",
+    "keepExistingSettings": "Keep existing settings",
+    "overwriteSettings": "Overwrite with imported settings",
+    "applyResolutions": "Apply Resolutions"
   }
 }
