@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { RefreshCw, X } from 'lucide-react';
 
 const UpdateNotification = () => {
+  const { t } = useTranslation();
   const [showUpdate, setShowUpdate] = useState(false);
 
   useEffect(() => {
@@ -29,8 +31,8 @@ const UpdateNotification = () => {
         <div className="flex items-center gap-3">
           <RefreshCw size={16} className="animate-spin" />
           <div>
-            <h3 className="text-sm font-semibold">Update Available</h3>
-            <p className="text-xs opacity-90">A new version is ready to install</p>
+            <h3 className="text-sm font-semibold">{t('pwa.updateAvailable')}</h3>
+            <p className="text-xs opacity-90">{t('pwa.updateDescription')}</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -38,7 +40,7 @@ const UpdateNotification = () => {
             onClick={handleRefresh}
             className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white text-xs px-3 py-1 rounded transition-colors"
           >
-            Refresh
+            {t('pwa.refresh')}
           </button>
           <button
             onClick={handleDismiss}

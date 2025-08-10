@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { format } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 import { ChevronLeft, ChevronRight, Calendar, CheckCircle, Circle, Save, Plus, GripVertical } from 'lucide-react';
 import {
   DndContext,
@@ -20,7 +21,6 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import useStore from '../store/useStore';
-import { strings } from '../strings';
 import ActivityManager from './ActivityManager';
 
 // Sortable Activity Item Component for Today
@@ -86,6 +86,7 @@ const SortableTodayActivityItem = ({ activity, isCompleted, onToggle }) => {
 };
 
 const Today = () => {
+  const { t } = useTranslation();
   const {
     activities,
     currentDate,
@@ -175,11 +176,11 @@ const Today = () => {
             <div className="flex items-center gap-2">
               <Calendar className="w-5 h-5 text-blue-600 dark:text-blue-400" />
               <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                {format(currentDate, strings.dateFormat)}
+                {format(currentDate, t('dateNavigation.dateFormat'))}
               </h2>
               {isToday && (
                 <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs rounded-full">
-                  Today
+                  {t('navigation.today')}
                 </span>
               )}
             </div>
@@ -198,7 +199,7 @@ const Today = () => {
               onClick={goToToday}
               className="w-full btn-secondary text-sm"
             >
-              Go to Today
+              {t('dateNavigation.nextDay')}
             </button>
           )}
         </div>
@@ -209,7 +210,7 @@ const Today = () => {
         <div className="card p-6 mb-6">
           <div className="flex items-center justify-between mb-2">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Progress
+              {t('dailyTracking.todayActivities')}
             </h2>
             <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">
               {completionRate}%
@@ -229,20 +230,20 @@ const Today = () => {
         {/* Activities List */}
         <div className="card p-6 mb-6">
           <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
-            {strings.todayActivities}
+            {t('dailyTracking.todayActivities')}
           </h2>
           
           {sortedActivities.length === 0 ? (
             <div className="text-center py-8">
               <p className="text-gray-500 dark:text-gray-400 mb-4">
-                {strings.noActivities}
+                {t('dailyTracking.noActivities')}
               </p>
               <button
                 onClick={() => setShowActivityManager(true)}
                 className="btn-primary flex items-center gap-2 mx-auto"
               >
                 <Plus className="w-4 h-4" />
-                Add Your First Activity
+                {t('activityManager.addNewActivity')}
               </button>
             </div>
           ) : (
@@ -295,7 +296,7 @@ const Today = () => {
         <div className="card p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-              {strings.notes}
+              {t('dailyTracking.notes')}
             </h2>
             <button
               onClick={handleSaveNotes}
@@ -303,14 +304,14 @@ const Today = () => {
               className="btn-primary px-3 py-1 text-sm flex items-center gap-1"
             >
               <Save className="w-4 h-4" />
-              {isSavingNotes ? 'Saving...' : strings.saveNotes}
+                             {isSavingNotes ? t('activityManager.saving') : t('dailyTracking.saveNotes')}
             </button>
           </div>
           
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            placeholder={strings.notesPlaceholder}
+                          placeholder={t('dailyTracking.notesPlaceholder')}
             className="input-field min-h-[120px] resize-none"
             rows={5}
           />

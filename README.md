@@ -1,6 +1,6 @@
 # Momentum - Activity Tracker PWA
 
-A mobile-first Progressive Web App (PWA) for tracking daily activities and building momentum. Built with React, Tailwind CSS, and designed to work entirely offline.
+A mobile-first Progressive Web App (PWA) for tracking daily activities and building momentum. Built with React, Tailwind CSS, and designed to work entirely offline. Now with full localization support for English and Spanish.
 
 ## Features
 
@@ -13,6 +13,17 @@ A mobile-first Progressive Web App (PWA) for tracking daily activities and build
 - ✅ **Statistics**: View completion rates and activity performance
 - ✅ **Offline-First**: Works without internet connection
 - ✅ **Auto-Updates**: Notifies when new versions are available
+- ✅ **Multi-Language Support**: English and Spanish with easy language switching
+- ✅ **Localization**: Complete UI translation with react-i18next
+
+## Languages Supported
+
+- 🇺🇸 **English** (default)
+- 🇪🇸 **Spanish** (Español)
+
+### Language Switching
+
+Users can easily switch between languages in the Settings page. The language preference is saved in localStorage and persists between sessions.
 
 ## PWA Installation
 
@@ -63,13 +74,76 @@ The app uses Vite PWA plugin for service worker generation and manifest creation
 - `src/components/OfflineIndicator.jsx` - Offline status
 - `src/components/UpdateNotification.jsx` - Update notifications
 
+### Localization Development
+The app uses react-i18next for internationalization. Key files:
+
+- `src/i18n.js` - i18n configuration
+- `src/locales/en.json` - English translations
+- `src/locales/es.json` - Spanish translations
+- `src/components/LanguageSwitcher.jsx` - Language switcher component
+
+## Adding New Languages
+
+To add support for a new language:
+
+1. **Create translation file**: Add a new JSON file in `src/locales/` (e.g., `fr.json`)
+
+2. **Add translations**: Copy the structure from `en.json` and translate all values:
+```json
+{
+  "navigation": {
+    "today": "Aujourd'hui",
+    "stats": "Statistiques",
+    "settings": "Paramètres"
+  },
+  // ... translate all other keys
+}
+```
+
+3. **Update i18n configuration**: Add the new language to `src/i18n.js`:
+```javascript
+import frTranslations from './locales/fr.json';
+
+// In the resources object:
+resources: {
+  en: { translation: enTranslations },
+  es: { translation: esTranslations },
+  fr: { translation: frTranslations } // Add this line
+}
+
+// Update getAvailableLanguages function:
+export const getAvailableLanguages = () => {
+  return [
+    { code: 'en', name: 'English', nativeName: 'English' },
+    { code: 'es', name: 'Spanish', nativeName: 'Español' },
+    { code: 'fr', name: 'French', nativeName: 'Français' } // Add this line
+  ];
+};
+```
+
+4. **Test the new language**: Switch to the new language in the app and verify all translations work correctly.
+
+### Translation Keys Structure
+
+The app uses nested translation keys for better organization:
+
+- `navigation.*` - Navigation labels
+- `onboarding.*` - Onboarding flow text
+- `dailyTracking.*` - Daily tracking interface
+- `statistics.*` - Statistics and charts
+- `settings.*` - Settings page
+- `messages.*` - Success/error messages
+- `errors.*` - Error messages
+- `pwa.*` - PWA-specific text
+- `activityManager.*` - Activity management interface
+
 ## Data Storage
 
 All user data is stored locally in the browser:
 
 - **Activities**: List of user-defined activities
 - **Daily Data**: Completion status for each day
-- **Settings**: User preferences (dark mode, etc.)
+- **Settings**: User preferences (dark mode, language, etc.)
 
 ### Data Export/Import
 The app supports data export and import via JSON files in the Settings section.
@@ -119,8 +193,17 @@ The app is optimized to achieve high Lighthouse scores:
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Test PWA functionality
+4. Test PWA functionality and localization
 5. Submit a pull request
+
+### Contributing Translations
+
+To contribute translations:
+
+1. Fork the repository
+2. Add or update translation files in `src/locales/`
+3. Test the translations in the app
+4. Submit a pull request with your changes
 
 ## License
 

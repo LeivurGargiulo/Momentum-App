@@ -1,11 +1,13 @@
 import { useState, useRef } from 'react';
 import { Moon, Sun, Download, Upload, Trash2, Heart, Info, Settings as SettingsIcon } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import useStore from '../store/useStore';
 import { exportData, importData, clearAllData } from '../utils/storage';
-import { strings } from '../strings';
 import ActivityManager from './ActivityManager';
+import LanguageSwitcher from './LanguageSwitcher';
 
 const Settings = () => {
+  const { t } = useTranslation();
   const { settings, toggleDarkMode, getSortedActivities } = useStore();
   const [isExporting, setIsExporting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
@@ -32,7 +34,7 @@ const Settings = () => {
         URL.revokeObjectURL(url);
         
         // Show success message
-        alert(strings.dataExported);
+        alert(t('messages.dataExported'));
       } else {
         alert('Error exporting data');
       }
@@ -59,7 +61,7 @@ const Settings = () => {
       try {
         const success = importData(e.target.result);
         if (success) {
-          alert(strings.dataImported);
+          alert(t('messages.dataImported'));
           window.location.reload(); // Reload to update the app state
         } else {
           alert('Error importing data');
@@ -77,13 +79,13 @@ const Settings = () => {
   };
 
   const handleClearData = () => {
-    if (window.confirm(strings.confirmClearData)) {
+    if (window.confirm(t('messages.confirmClearData'))) {
       setIsClearing(true);
       
       try {
         const success = clearAllData();
         if (success) {
-          alert(strings.dataCleared);
+          alert(t('messages.dataCleared'));
           window.location.reload(); // Reload to reset the app
         } else {
           alert('Error clearing data');
@@ -103,7 +105,7 @@ const Settings = () => {
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-            {strings.settings}
+            {t('settings.settings')}
           </h1>
           <p className="text-gray-600 dark:text-gray-300">
             Customize your Momentum experience
@@ -133,6 +135,11 @@ const Settings = () => {
           </div>
         </div>
 
+        {/* Language Switcher */}
+        <div className="card p-6 mb-6">
+          <LanguageSwitcher />
+        </div>
+
         {/* Dark Mode Toggle */}
         <div className="card p-6 mb-6">
           <div className="flex items-center justify-between">
@@ -144,7 +151,7 @@ const Settings = () => {
               )}
               <div>
                 <h3 className="font-semibold text-gray-900 dark:text-white">
-                  {settings.darkMode ? strings.darkMode : strings.lightMode}
+                  {settings.darkMode ? t('settings.darkMode') : t('settings.lightMode')}
                 </h3>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
                   Switch between light and dark themes
@@ -184,7 +191,7 @@ const Settings = () => {
                 <Download className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                 <div className="text-left">
                   <div className="font-medium text-gray-900 dark:text-white">
-                    {strings.exportData}
+                    {t('settings.exportData')}
                   </div>
                   <div className="text-sm text-gray-500 dark:text-gray-400">
                     Download your data as JSON
@@ -208,7 +215,7 @@ const Settings = () => {
                 <Upload className="w-5 h-5 text-green-600 dark:text-green-400" />
                 <div className="text-left">
                   <div className="font-medium text-gray-900 dark:text-white">
-                    {strings.importData}
+                    {t('settings.importData')}
                   </div>
                   <div className="text-sm text-gray-500 dark:text-gray-400">
                     Restore from backup file
@@ -232,7 +239,7 @@ const Settings = () => {
                 <Trash2 className="w-5 h-5 text-red-600 dark:text-red-400" />
                 <div className="text-left">
                   <div className="font-medium text-gray-900 dark:text-white">
-                    {strings.clearData}
+                    {t('settings.clearData')}
                   </div>
                   <div className="text-sm text-gray-500 dark:text-gray-400">
                     Delete all your data permanently
@@ -262,19 +269,19 @@ const Settings = () => {
           <div className="flex items-center gap-3 mb-4">
             <Info className="w-6 h-6 text-gray-600 dark:text-gray-400" />
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-              {strings.about}
+              {t('settings.about')}
             </h2>
           </div>
           
           <div className="space-y-3 text-sm text-gray-600 dark:text-gray-300">
-            <p>Momentum helps you build positive habits and track your daily progress. Build momentum, one day at a time.</p>
+            <p>{t('about.appDescription')}</p>
             <div className="flex items-center justify-between pt-3 border-t border-gray-200 dark:border-gray-700">
               <span className="text-xs text-gray-500 dark:text-gray-400">
-                Version 2.0.0
+                {t('settings.version')}
               </span>
               <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
                 <Heart className="w-3 h-3 text-red-500" />
-                <span>Made with love</span>
+                <span>{t('about.madeWith')}</span>
               </div>
             </div>
           </div>

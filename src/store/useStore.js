@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 import { formatDateKey, loadActivities, saveActivities, loadDailyData, saveDailyData, loadSettings, saveSettings } from '../utils/storage';
-import { strings } from '../strings';
 
 const useStore = create((set, get) => ({
   // State
@@ -290,14 +289,46 @@ const useStore = create((set, get) => ({
   
   // Setup default activities
   setupDefaultActivities: () => {
-    const defaultActivities = strings.defaultActivities.map((name, index) => ({
+    // Import default activities from the current language
+    const currentLanguage = localStorage.getItem('momentum-language') || 'en';
+    let defaultActivities = [];
+    
+    if (currentLanguage === 'es') {
+      defaultActivities = [
+        'Tomar medicación',
+        'Ejercicio',
+        'Meditación',
+        'Diario',
+        'Llamar a un amigo',
+        'Salir al exterior',
+        'Leer',
+        'Practicar gratitud',
+        'Comer comidas saludables',
+        'Dormir lo suficiente'
+      ];
+    } else {
+      defaultActivities = [
+        'Take medication',
+        'Exercise',
+        'Meditation',
+        'Journal',
+        'Call a friend',
+        'Go outside',
+        'Read',
+        'Practice gratitude',
+        'Eat healthy meals',
+        'Get enough sleep'
+      ];
+    }
+    
+    const activities = defaultActivities.map((name, index) => ({
       id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
       name,
       order: index
     }));
     
-    set({ activities: defaultActivities, isOnboarded: true });
-    saveActivities(defaultActivities);
+    set({ activities, isOnboarded: true });
+    saveActivities(activities);
   }
 }));
 
