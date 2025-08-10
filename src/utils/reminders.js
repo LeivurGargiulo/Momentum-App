@@ -5,35 +5,35 @@
 const REMINDERS_KEY = 'momentum-reminders';
 
 // Default reminder templates
-export const DEFAULT_REMINDERS = [
+export const getDefaultReminders = (t) => [
   {
     id: 'morning-check',
-    label: 'Morning Check-in',
+    label: t('reminders.defaultReminders.morningCheck'),
     time: '09:00',
     enabled: true,
-    message: 'Time to check off today\'s activities!'
+    message: t('reminders.defaultReminders.morningCheckMessage')
   },
   {
     id: 'evening-review',
-    label: 'Evening Review',
+    label: t('reminders.defaultReminders.eveningReview'),
     time: '20:00',
     enabled: true,
-    message: 'How did your day go? Review your progress.'
+    message: t('reminders.defaultReminders.eveningReviewMessage')
   }
 ];
 
 // Load reminders from localStorage
-export const loadReminders = () => {
+export const loadReminders = (t) => {
   try {
     const stored = localStorage.getItem(REMINDERS_KEY);
     if (stored) {
       return JSON.parse(stored);
     }
     // Return default reminders if none exist
-    return DEFAULT_REMINDERS;
+    return getDefaultReminders(t);
   } catch (error) {
     console.error('Error loading reminders:', error);
-    return DEFAULT_REMINDERS;
+    return getDefaultReminders(t);
   }
 };
 
@@ -49,8 +49,8 @@ export const saveReminders = (reminders) => {
 };
 
 // Create a new reminder
-export const createReminder = (label, time, message = '') => {
-  const reminders = loadReminders();
+export const createReminder = (label, time, message = '', t) => {
+  const reminders = loadReminders(t);
   const newReminder = {
     id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
     label,
@@ -65,8 +65,8 @@ export const createReminder = (label, time, message = '') => {
 };
 
 // Update an existing reminder
-export const updateReminder = (id, updates) => {
-  const reminders = loadReminders();
+export const updateReminder = (id, updates, t) => {
+  const reminders = loadReminders(t);
   const updatedReminders = reminders.map(reminder => 
     reminder.id === id ? { ...reminder, ...updates } : reminder
   );
@@ -75,16 +75,16 @@ export const updateReminder = (id, updates) => {
 };
 
 // Delete a reminder
-export const deleteReminder = (id) => {
-  const reminders = loadReminders();
+export const deleteReminder = (id, t) => {
+  const reminders = loadReminders(t);
   const updatedReminders = reminders.filter(reminder => reminder.id !== id);
   saveReminders(updatedReminders);
   return true;
 };
 
 // Toggle reminder enabled/disabled
-export const toggleReminder = (id) => {
-  const reminders = loadReminders();
+export const toggleReminder = (id, t) => {
+  const reminders = loadReminders(t);
   const updatedReminders = reminders.map(reminder => 
     reminder.id === id ? { ...reminder, enabled: !reminder.enabled } : reminder
   );
@@ -185,8 +185,8 @@ export const shouldFireReminder = (reminder) => {
 };
 
 // Get upcoming reminders for today
-export const getUpcomingReminders = () => {
-  const reminders = loadReminders();
+export const getUpcomingReminders = (t) => {
+  const reminders = loadReminders(t);
   const now = new Date();
   const currentTime = now.getHours() * 60 + now.getMinutes();
   
@@ -209,22 +209,24 @@ export const getUpcomingReminders = () => {
 };
 
 // Format time until reminder
-export const formatTimeUntil = (minutes) => {
-  if (minutes < 0) return 'Past due';
-  if (minutes < 60) return `in ${minutes} minutes`;
+export const formatTimeUntil = (minutes, t) => {
+  if (minutes < 0) return t('reminders.timeFormat.pastDue');
+  if (minutes < 60) return t('reminders.timeFormat.inMinutes', { minutes });
   
   const hours = Math.floor(minutes / 60);
   const remainingMinutes = minutes % 60;
   
   if (remainingMinutes === 0) {
-    return `in ${hours} hour${hours > 1 ? 's' : ''}`;
+    return hours > 1 
+      ? t('reminders.timeFormat.inHoursPlural', { hours })
+      : t('reminders.timeFormat.inHours', { hours });
   }
   
-  return `in ${hours}h ${remainingMinutes}m`;
+  return t('reminders.timeFormat.inHoursMinutes', { hours, minutes: remainingMinutes });
 };
 
 // Initialize reminder scheduling
-export const initializeReminders = () => {
+export const initializeReminders = (t) => {
   if (!isNotificationsSupported()) {
     console.warn('Notifications not supported, reminders disabled');
     return;
@@ -232,7 +234,7 @@ export const initializeReminders = () => {
   
   // Check for reminders every minute
   setInterval(() => {
-    const reminders = loadReminders();
+    const reminders = loadReminders(t);
     
     reminders.forEach(reminder => {
       if (shouldFireReminder(reminder)) {

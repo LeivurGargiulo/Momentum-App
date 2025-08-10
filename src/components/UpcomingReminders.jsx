@@ -17,7 +17,7 @@ const UpcomingReminders = () => {
   }, []);
 
   const updateUpcomingReminders = () => {
-    const upcoming = getUpcomingReminders();
+    const upcoming = getUpcomingReminders(t);
     setUpcomingReminders(upcoming);
   };
 
@@ -46,7 +46,7 @@ const UpcomingReminders = () => {
               </span>
             </div>
             <p className="text-sm text-blue-700 dark:text-blue-300 mb-2">
-              {formatTimeUntil(nextReminder.timeUntil)}
+              {formatTimeUntil(nextReminder.timeUntil, t)}
             </p>
             {nextReminder.message && (
               <p className="text-sm text-blue-600 dark:text-blue-400 italic">
@@ -79,7 +79,7 @@ const UpcomingReminders = () => {
                   {reminder.label}
                 </span>
                 <span className="text-blue-600 dark:text-blue-400">
-                  {reminder.time} • {formatTimeUntil(reminder.timeUntil)}
+                  {reminder.time} • {formatTimeUntil(reminder.timeUntil, t)}
                 </span>
               </div>
             ))}

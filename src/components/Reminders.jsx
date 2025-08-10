@@ -62,14 +62,14 @@ const Reminders = ({ isOpen, onClose }) => {
   }, []);
 
   const loadRemindersData = () => {
-    const loadedReminders = loadReminders();
+    const loadedReminders = loadReminders(t);
     setReminders(loadedReminders);
   };
 
 
 
   const updateUpcomingReminders = () => {
-    const upcoming = getUpcomingReminders();
+    const upcoming = getUpcomingReminders(t);
     setUpcomingReminders(upcoming);
   };
 
@@ -87,7 +87,7 @@ const Reminders = ({ isOpen, onClose }) => {
       return;
     }
 
-    createReminder(formData.label, formData.time, formData.message);
+    createReminder(formData.label, formData.time, formData.message, t);
     setFormData({ label: '', time: '09:00', message: '' });
     setShowAddForm(false);
     loadRemindersData();
@@ -103,7 +103,7 @@ const Reminders = ({ isOpen, onClose }) => {
       label: formData.label,
       time: formData.time,
       message: formData.message
-    });
+    }, t);
     
     setFormData({ label: '', time: '09:00', message: '' });
     setEditingReminder(null);
@@ -113,14 +113,14 @@ const Reminders = ({ isOpen, onClose }) => {
 
   const handleDeleteReminder = (id) => {
     if (window.confirm(t('reminders.confirmDelete'))) {
-      deleteReminder(id);
+      deleteReminder(id, t);
       loadRemindersData();
       updateUpcomingReminders();
     }
   };
 
   const handleToggleReminder = (id) => {
-    toggleReminder(id);
+    toggleReminder(id, t);
     loadRemindersData();
     updateUpcomingReminders();
   };
@@ -243,7 +243,7 @@ const Reminders = ({ isOpen, onClose }) => {
                           {reminder.label}
                         </p>
                         <p className="text-sm text-blue-700 dark:text-blue-300">
-                          {reminder.time} • {formatTimeUntil(reminder.timeUntil)}
+                          {reminder.time} • {formatTimeUntil(reminder.timeUntil, t)}
                         </p>
                       </div>
                       <Clock className="w-4 h-4 text-blue-600 dark:text-blue-400" />
