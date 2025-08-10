@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import useStore from './store/useStore';
 import Onboarding from './components/Onboarding';
 import Today from './components/Today';
@@ -11,6 +12,7 @@ import UpdateNotification from './components/UpdateNotification';
 import PWATest from './components/PWATest';
 
 function App() {
+  const { t } = useTranslation();
   const { isOnboarded, initialize } = useStore();
   const [currentTab, setCurrentTab] = useState('today');
   const [isInitialized, setIsInitialized] = useState(false);
@@ -26,7 +28,7 @@ function App() {
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-300">Loading...</p>
+          <p className="text-gray-600 dark:text-gray-300">{t('common.loading')}</p>
         </div>
       </div>
     );

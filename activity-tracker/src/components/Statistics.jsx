@@ -39,7 +39,7 @@ const Statistics = () => {
       chartData,
       pieData
     };
-  }, [activities, dailyData, timeframe, getCompletionRate, getActivityStats]);
+  }, [dailyData, timeframe, getCompletionRate, getActivityStats]);
 
   if (activities.length === 0) {
     return (

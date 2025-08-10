@@ -13,7 +13,11 @@
     "activityName": "Nombre de la Actividad",
     "saveActivity": "Guardar Actividad",
     "deleteActivity": "Eliminar Actividad",
-    "cancel": "Cancelar"
+    "cancel": "Cancelar",
+    "addActivitiesDescription": "Añade algunas actividades que te gustaría rastrear diariamente. Siempre puedes añadir más después.",
+    "useDefaults": "Usar Predeterminados",
+    "readyToStart": "¡Listo para Comenzar!",
+    "readyToStartDescription": "Has añadido {{count}} actividades. ¡Estás listo para comenzar a rastrear tu progreso diario!"
   },
   "defaultActivities": [
     "Tomar medicación",
@@ -28,13 +32,16 @@
     "Dormir lo suficiente"
   ],
   "dailyTracking": {
+    "title": "Actividades de Hoy",
+    "subtitle": "Construye momentum, un día a la vez",
     "todayActivities": "Actividades de Hoy",
     "noActivities": "No hay actividades para hoy",
     "markComplete": "Marcar como completado",
     "markIncomplete": "Marcar como incompleto",
     "notes": "Notas",
     "notesPlaceholder": "¿Cómo te sientes hoy? Cualquier pensamiento o reflexión...",
-    "saveNotes": "Guardar Notas"
+    "saveNotes": "Guardar Notas",
+    "activitiesCompleted": "actividades completadas"
   },
   "dateNavigation": {
     "previousDay": "Día anterior",
@@ -42,6 +49,9 @@
     "dateFormat": "d 'de' MMMM, yyyy"
   },
   "statistics": {
+    "title": "Estadísticas",
+    "subtitle": "Rastrea tu progreso y ve cómo te está yendo",
+    "timeRange": "Rango de Tiempo:",
     "completionRate": "Tasa de Completitud",
     "daily": "Diario",
     "weekly": "Semanal",
@@ -63,9 +73,20 @@
     "currentStreak": "Racha actual",
     "days": "días",
     "day": "día",
-    "noStreak": "Sin racha actual"
+    "noStreak": "Sin racha actual",
+    "average": "promedio",
+    "consecutiveDays": "Días consecutivos",
+    "configured": "Configuradas",
+    "topActivity": "Actividad principal",
+    "byActivity": "por Actividad",
+    "overallProgress": "Progreso General"
   },
   "settings": {
+    "title": "Configuración",
+    "subtitle": "Personaliza tu experiencia de Momentum",
+    "manageActivities": "Gestionar Actividades",
+    "activitiesConfigured": "actividades configuradas",
+    "manage": "Gestionar",
     "exportData": "Exportar Datos",
     "importData": "Importar Datos",
     "clearData": "Borrar Todos los Datos",
@@ -75,7 +96,15 @@
     "version": "Versión 2.0.0",
     "language": "Idioma",
     "english": "English",
-    "spanish": "Español"
+    "spanish": "Español",
+    "dataManagement": "Gestión de Datos",
+    "switchTheme": "Cambiar entre temas claro y oscuro",
+    "downloadData": "Descargar tus datos como JSON",
+    "restoreBackup": "Restaurar desde archivo de respaldo",
+    "deletePermanently": "Eliminar todos tus datos permanentemente",
+    "exporting": "Exportando...",
+    "importing": "Importando...",
+    "clearing": "Borrando..."
   },
   "messages": {
     "dataExported": "Datos exportados exitosamente",
@@ -91,7 +120,11 @@
     "errorLoadingData": "Error al cargar datos",
     "errorSavingData": "Error al guardar datos",
     "errorExportingData": "Error al exportar datos",
-    "errorImportingData": "Error al importar datos"
+    "errorImportingData": "Error al importar datos",
+    "errorClearingData": "Error al borrar datos"
+  },
+  "common": {
+    "loading": "Cargando..."
   },
   "about": {
     "appDescription": "Momentum te ayuda a construir hábitos positivos y rastrear tu progreso diario. Construye momentum, un día a la vez.",

@@ -36,11 +36,11 @@ const Settings = () => {
         // Show success message
         alert(t('messages.dataExported'));
       } else {
-        alert('Error exporting data');
+        alert(t('errors.errorExportingData'));
       }
     } catch (error) {
       console.error('Export error:', error);
-      alert('Error exporting data');
+      alert(t('errors.errorExportingData'));
     } finally {
       setIsExporting(false);
     }
@@ -64,11 +64,11 @@ const Settings = () => {
           alert(t('messages.dataImported'));
           window.location.reload(); // Reload to update the app state
         } else {
-          alert('Error importing data');
+          alert(t('errors.errorImportingData'));
         }
       } catch (error) {
         console.error('Import error:', error);
-        alert('Error importing data');
+        alert(t('errors.errorImportingData'));
       } finally {
         setIsImporting(false);
       }
@@ -88,11 +88,11 @@ const Settings = () => {
           alert(t('messages.dataCleared'));
           window.location.reload(); // Reload to reset the app
         } else {
-          alert('Error clearing data');
+          alert(t('errors.errorClearingData'));
         }
       } catch (error) {
         console.error('Clear error:', error);
-        alert('Error clearing data');
+        alert(t('errors.errorClearingData'));
       } finally {
         setIsClearing(false);
       }
@@ -105,10 +105,10 @@ const Settings = () => {
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-            {t('settings.settings')}
+            {t('settings.title')}
           </h1>
           <p className="text-gray-600 dark:text-gray-300">
-            Customize your Momentum experience
+            {t('settings.subtitle')}
           </p>
         </div>
 
@@ -119,10 +119,10 @@ const Settings = () => {
               <SettingsIcon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
               <div>
                 <h3 className="font-semibold text-gray-900 dark:text-white">
-                  Manage Activities
+                  {t('settings.manageActivities')}
                 </h3>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {sortedActivities.length} activities configured
+                  {sortedActivities.length} {t('settings.activitiesConfigured')}
                 </p>
               </div>
             </div>
@@ -130,7 +130,7 @@ const Settings = () => {
               onClick={() => setShowActivityManager(true)}
               className="btn-primary px-4 py-2 text-sm"
             >
-              Manage
+              {t('settings.manage')}
             </button>
           </div>
         </div>
@@ -154,7 +154,7 @@ const Settings = () => {
                   {settings.darkMode ? t('settings.darkMode') : t('settings.lightMode')}
                 </h3>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Switch between light and dark themes
+                  {t('settings.switchTheme')}
                 </p>
               </div>
             </div>
@@ -177,7 +177,7 @@ const Settings = () => {
         {/* Data Management */}
         <div className="card p-6 mb-6">
           <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
-            Data Management
+            {t('settings.dataManagement')}
           </h2>
           
           <div className="space-y-4">
@@ -194,13 +194,13 @@ const Settings = () => {
                     {t('settings.exportData')}
                   </div>
                   <div className="text-sm text-gray-500 dark:text-gray-400">
-                    Download your data as JSON
+                    {t('settings.downloadData')}
                   </div>
                 </div>
               </div>
               {isExporting && (
                 <div className="text-sm text-blue-600 dark:text-blue-400">
-                  Exporting...
+                  {t('settings.exporting')}
                 </div>
               )}
             </button>
@@ -218,13 +218,13 @@ const Settings = () => {
                     {t('settings.importData')}
                   </div>
                   <div className="text-sm text-gray-500 dark:text-gray-400">
-                    Restore from backup file
+                    {t('settings.restoreBackup')}
                   </div>
                 </div>
               </div>
               {isImporting && (
                 <div className="text-sm text-green-600 dark:text-green-400">
-                  Importing...
+                  {t('settings.importing')}
                 </div>
               )}
             </button>
@@ -242,13 +242,13 @@ const Settings = () => {
                     {t('settings.clearData')}
                   </div>
                   <div className="text-sm text-gray-500 dark:text-gray-400">
-                    Delete all your data permanently
+                    {t('settings.deletePermanently')}
                   </div>
                 </div>
               </div>
               {isClearing && (
                 <div className="text-sm text-red-600 dark:text-red-400">
-                  Clearing...
+                  {t('settings.clearing')}
                 </div>
               )}
             </button>

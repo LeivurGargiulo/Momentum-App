@@ -167,7 +167,7 @@ const useStore = create((set, get) => ({
   },
   
   // Statistics helpers
-  getCompletionRate: (period = 'daily') => {
+  getCompletionRate: () => {
     const activities = get().activities;
     const dailyData = get().dailyData;
     

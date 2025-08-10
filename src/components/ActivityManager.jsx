@@ -11,7 +11,6 @@ import {
   DragOverlay,
 } from '@dnd-kit/core';
 import {
-  arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
@@ -23,7 +22,7 @@ import { CSS } from '@dnd-kit/utilities';
 import useStore from '../store/useStore';
 
 // Sortable Activity Item Component
-const SortableActivityItem = ({ activity, index, editingId, editingName, onStartEdit, onSaveEdit, onCancelEdit, onDelete, onEditingNameChange }) => {
+const SortableActivityItem = ({ activity, editingId, editingName, onStartEdit, onSaveEdit, onCancelEdit, onDelete, onEditingNameChange }) => {
   const {
     attributes,
     listeners,
@@ -115,7 +114,6 @@ const SortableActivityItem = ({ activity, index, editingId, editingName, onStart
 const ActivityManager = ({ isOpen, onClose }) => {
   const { t } = useTranslation();
   const { 
-    activities, 
     addActivity, 
     updateActivity, 
     deleteActivity, 
@@ -195,7 +193,7 @@ const ActivityManager = ({ isOpen, onClose }) => {
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-            Manage Activities
+            {t('settings.manageActivities')}
           </h2>
           <button
             onClick={onClose}
