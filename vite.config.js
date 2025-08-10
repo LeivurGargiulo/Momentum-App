@@ -11,7 +11,8 @@ export default defineConfig({
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}']
       },
-      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
+      includeAssets: ['pwa-icon.svg', 'pwa-192x192.png', 'pwa-512x512.png'],
+      injectRegister: 'auto',
       manifest: {
         name: 'Momentum - Daily Activity Tracker',
         short_name: 'Momentum',
