@@ -1,19 +1,40 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { BarChart3, TrendingUp, Calendar, BarChart, Flame } from 'lucide-react';
-import { BarChart as RechartsBarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { BarChart3, TrendingUp, Calendar, BarChart, Flame, Heart, Battery, BookOpen } from 'lucide-react';
+import { BarChart as RechartsBarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
 import useStore from '../store/useStore';
 import ShareStats from './ShareStats';
+import JournalTimeline from './JournalTimeline';
 
 const Statistics = () => {
   const { t } = useTranslation();
-  const { activities, getActivityStats, getCompletionRate, getCurrentStreak } = useStore();
+  const { 
+    activities, 
+    getActivityStats, 
+    getCompletionRate, 
+    getCurrentStreak,
+    getMoodStats,
+    getEnergyStats,
+    getMoodEnergyCorrelation,
+    getJournalStats,
+    setCurrentDate
+  } = useStore();
   const [timeRange, setTimeRange] = useState('daily');
+  const [moodEnergyTimeRange, setMoodEnergyTimeRange] = useState('week');
+  const [journalTimeRange, setJournalTimeRange] = useState('month');
 
   const sortedActivities = activities.sort((a, b) => a.order - b.order);
   const activityStats = getActivityStats();
   const completionRate = getCompletionRate(timeRange);
   const currentStreak = getCurrentStreak();
+  
+  // Mood and Energy Statistics
+  const moodStats = getMoodStats(moodEnergyTimeRange);
+  const energyStats = getEnergyStats(moodEnergyTimeRange);
+  const moodEnergyCorrelation = getMoodEnergyCorrelation();
+  
+  // Journal Statistics
+  const journalStats = getJournalStats(journalTimeRange);
 
   // Prepare data for charts
   const barChartData = activityStats.map(activity => ({
@@ -30,6 +51,18 @@ const Statistics = () => {
     { value: 'daily', label: t('statistics.daily'), icon: Calendar },
     { value: 'weekly', label: t('statistics.weekly'), icon: BarChart },
     { value: 'monthly', label: t('statistics.monthly'), icon: TrendingUp },
+  ];
+
+  const moodEnergyTimeRangeOptions = [
+    { value: 'week', label: t('statistics.week'), icon: Calendar },
+    { value: 'month', label: t('statistics.month'), icon: BarChart },
+    { value: 'all', label: t('statistics.allTime'), icon: TrendingUp },
+  ];
+
+  const journalTimeRangeOptions = [
+    { value: 'week', label: t('statistics.week'), icon: Calendar },
+    { value: 'month', label: t('statistics.month'), icon: BarChart },
+    { value: 'all', label: t('statistics.allTime'), icon: TrendingUp },
   ];
 
   return (
@@ -75,6 +108,62 @@ const Statistics = () => {
             
             {/* Share Stats Button */}
             <ShareStats timeRange={timeRange} />
+          </div>
+        </div>
+
+        {/* Mood & Energy Time Range Selector */}
+        <div className="card p-6 mb-6">
+          <div className="flex items-center gap-4">
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              {t('statistics.moodEnergyTimeRange')}
+            </span>
+            <div className="flex gap-2">
+              {moodEnergyTimeRangeOptions.map((option) => {
+                const Icon = option.icon;
+                return (
+                  <button
+                    key={option.value}
+                    onClick={() => setMoodEnergyTimeRange(option.value)}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      moodEnergyTimeRange === option.value
+                        ? 'bg-pink-600 text-white'
+                        : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                    }`}
+                  >
+                    <Icon className="w-4 h-4" />
+                    {option.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Journal Time Range Selector */}
+        <div className="card p-6 mb-6">
+          <div className="flex items-center gap-4">
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              {t('statistics.journalTimeRange')}
+            </span>
+            <div className="flex gap-2">
+              {journalTimeRangeOptions.map((option) => {
+                const Icon = option.icon;
+                return (
+                  <button
+                    key={option.value}
+                    onClick={() => setJournalTimeRange(option.value)}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      journalTimeRange === option.value
+                        ? 'bg-purple-600 text-white'
+                        : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                    }`}
+                  >
+                    <Icon className="w-4 h-4" />
+                    {option.label}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
 
@@ -170,6 +259,106 @@ const Statistics = () => {
               {activityStats.length > 0 ? activityStats[0].name : t('statistics.noData')}
             </div>
           </div>
+
+          {/* Average Mood */}
+          <div className="card p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-pink-100 dark:bg-pink-900 rounded-lg flex items-center justify-center">
+                  <Heart className="w-5 h-5 text-pink-600 dark:text-pink-400" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 dark:text-white">
+                    {t('statistics.averageMood')}
+                  </h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    {moodEnergyTimeRange} {t('statistics.average')}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="text-3xl font-bold text-pink-600 dark:text-pink-400">
+              {moodStats.hasData ? moodStats.averageMood.toFixed(1) : '--'}
+            </div>
+            <div className="text-sm text-gray-500 dark:text-gray-400">
+              {moodStats.hasData ? t('statistics.outOf8') : t('statistics.noData')}
+            </div>
+          </div>
+
+          {/* Average Energy */}
+          <div className="card p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-emerald-100 dark:bg-emerald-900 rounded-lg flex items-center justify-center">
+                  <Battery className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 dark:text-white">
+                    {t('statistics.averageEnergy')}
+                  </h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    {moodEnergyTimeRange} {t('statistics.average')}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
+              {energyStats.hasData ? energyStats.averageEnergy.toFixed(1) : '--'}
+            </div>
+            <div className="text-sm text-gray-500 dark:text-gray-400">
+              {energyStats.hasData ? t('statistics.outOf5') : t('statistics.noData')}
+            </div>
+          </div>
+
+          {/* Journal Consistency */}
+          <div className="card p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center">
+                  <BookOpen className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 dark:text-white">
+                    {t('statistics.journalConsistency')}
+                  </h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    {journalTimeRange} {t('statistics.consistency')}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">
+              {journalStats.hasData ? journalStats.stats.consistencyRate.toFixed(1) : '--'}
+            </div>
+            <div className="text-sm text-gray-500 dark:text-gray-400">
+              {journalStats.hasData ? t('statistics.percent') : t('statistics.noData')}
+            </div>
+          </div>
+
+          {/* Total Journal Entries */}
+          <div className="card p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-indigo-100 dark:bg-indigo-900 rounded-lg flex items-center justify-center">
+                  <BookOpen className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 dark:text-white">
+                    {t('statistics.totalJournalEntries')}
+                  </h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    {journalTimeRange} {t('statistics.total')}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">
+              {journalStats.hasData ? journalStats.stats.totalEntries : '--'}
+            </div>
+            <div className="text-sm text-gray-500 dark:text-gray-400">
+              {journalStats.hasData ? t('statistics.entries') : t('statistics.noData')}
+            </div>
+          </div>
         </div>
 
         {/* Charts */}
@@ -236,6 +425,121 @@ const Statistics = () => {
           </div>
         </div>
 
+        {/* Mood & Energy Trend Charts */}
+        {(moodStats.hasData || energyStats.hasData) && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+            {/* Mood Trend Chart */}
+            {moodStats.hasData && (
+              <div className="card p-6">
+                <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
+                  {t('statistics.moodTrend')}
+                </h3>
+                <ResponsiveContainer width="100%" height={300}>
+                  <LineChart data={moodStats.moodTrend}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis 
+                      dataKey="date" 
+                      angle={-45}
+                      textAnchor="end"
+                      height={80}
+                      fontSize={12}
+                    />
+                    <YAxis domain={[1, 8]} />
+                    <Tooltip />
+                    <Line 
+                      type="monotone" 
+                      dataKey="moodValue" 
+                      stroke="#EC4899" 
+                      strokeWidth={2}
+                      dot={{ fill: '#EC4899', strokeWidth: 2, r: 4 }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            )}
+
+            {/* Energy Trend Chart */}
+            {energyStats.hasData && (
+              <div className="card p-6">
+                <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
+                  {t('statistics.energyTrend')}
+                </h3>
+                <ResponsiveContainer width="100%" height={300}>
+                  <LineChart data={energyStats.energyTrend}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis 
+                      dataKey="date" 
+                      angle={-45}
+                      textAnchor="end"
+                      height={80}
+                      fontSize={12}
+                    />
+                    <YAxis domain={[1, 5]} />
+                    <Tooltip />
+                    <Line 
+                      type="monotone" 
+                      dataKey="energy" 
+                      stroke="#10B981" 
+                      strokeWidth={2}
+                      dot={{ fill: '#10B981', strokeWidth: 2, r: 4 }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Mood & Energy Correlation */}
+        {moodEnergyCorrelation.hasData && (
+          <div className="card p-6 mt-6">
+            <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
+              {t('statistics.moodEnergyCorrelation')}
+            </h3>
+            <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+              {t('statistics.correlationDescription')}
+            </p>
+            <div className="space-y-3">
+              {moodEnergyCorrelation.correlations.slice(0, 5).map((correlation, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                      #{index + 1}
+                    </span>
+                    <span className="text-gray-900 dark:text-white">
+                      {correlation.activity}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-4 text-sm">
+                    {correlation.avgMood && (
+                      <div className="flex items-center gap-1">
+                        <Heart className="w-4 h-4 text-pink-500" />
+                        <span className="text-pink-600 dark:text-pink-400">
+                          {correlation.avgMood.toFixed(1)}
+                        </span>
+                      </div>
+                    )}
+                    {correlation.avgEnergy && (
+                      <div className="flex items-center gap-1">
+                        <Battery className="w-4 h-4 text-emerald-500" />
+                        <span className="text-emerald-600 dark:text-emerald-400">
+                          {correlation.avgEnergy.toFixed(1)}
+                        </span>
+                      </div>
+                    )}
+                    <span className="text-gray-500 dark:text-gray-400">
+                      ({correlation.completionCount} {t('statistics.times')})
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Activity List */}
         <div className="card p-6 mt-6">
           <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
@@ -273,6 +577,21 @@ const Statistics = () => {
             </div>
           )}
         </div>
+
+        {/* Journal Timeline */}
+        {journalStats.hasData && (
+          <div className="mt-6">
+            <JournalTimeline
+              entries={journalStats.entries}
+              onDateClick={(date) => {
+                // Navigate to the selected date
+                const selectedDate = new Date(date);
+                setCurrentDate(selectedDate);
+                // You could also add a callback to switch to the Today tab
+              }}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
