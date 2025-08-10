@@ -1,6 +1,115 @@
 import { useState } from 'react';
-import { Plus, Edit3, Trash2, ChevronUp, ChevronDown, X, Save } from 'lucide-react';
+import { Plus, Edit3, Trash2, X, Save, GripVertical } from 'lucide-react';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragOverlay,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import {
+  useSortable,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import useStore from '../store/useStore';
+
+// Sortable Activity Item Component
+const SortableActivityItem = ({ activity, index, editingId, editingName, onStartEdit, onSaveEdit, onCancelEdit, onDelete, onEditingNameChange }) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: activity.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`sortable-item flex items-center gap-3 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 ${
+        isDragging ? 'shadow-lg' : ''
+      }`}
+    >
+      {/* Drag Handle */}
+      <div
+        {...attributes}
+        {...listeners}
+        className="drag-handle p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+      >
+        <GripVertical className="w-4 h-4" />
+      </div>
+
+      {/* Activity Name */}
+      <div className="flex-1">
+        {editingId === activity.id ? (
+          <input
+            type="text"
+            value={editingName}
+            onChange={onEditingNameChange}
+            className="w-full px-3 py-2 border border-blue-500 rounded-lg bg-white dark:bg-gray-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            onKeyPress={(e) => e.key === 'Enter' && onSaveEdit()}
+            autoFocus
+          />
+        ) : (
+          <span className="text-gray-900 dark:text-white font-medium">
+            {activity.name}
+          </span>
+        )}
+      </div>
+
+      {/* Action Buttons */}
+      <div className="flex gap-1">
+        {editingId === activity.id ? (
+          <>
+            <button
+              onClick={onSaveEdit}
+              className="p-2 text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300"
+            >
+              <Save className="w-4 h-4" />
+            </button>
+            <button
+              onClick={onCancelEdit}
+              className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              onClick={() => onStartEdit(activity)}
+              className="p-2 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+            >
+              <Edit3 className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => onDelete(activity.id)}
+              className="p-2 text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+};
 
 const ActivityManager = ({ isOpen, onClose }) => {
   const { 
@@ -8,8 +117,7 @@ const ActivityManager = ({ isOpen, onClose }) => {
     addActivity, 
     updateActivity, 
     deleteActivity, 
-    moveActivityUp, 
-    moveActivityDown,
+    reorderActivities,
     getSortedActivities 
   } = useStore();
   
@@ -17,8 +125,17 @@ const ActivityManager = ({ isOpen, onClose }) => {
   const [editingId, setEditingId] = useState(null);
   const [editingName, setEditingName] = useState('');
   const [showAddForm, setShowAddForm] = useState(false);
+  const [activeId, setActiveId] = useState(null);
 
   const sortedActivities = getSortedActivities();
+
+  // DnD sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   const handleAddActivity = () => {
     if (newActivityName.trim()) {
@@ -49,6 +166,22 @@ const ActivityManager = ({ isOpen, onClose }) => {
   const handleDeleteActivity = (id) => {
     if (window.confirm('Are you sure you want to delete this activity? This will remove it from future days but keep historical data.')) {
       deleteActivity(id);
+    }
+  };
+
+  const handleDragStart = (event) => {
+    setActiveId(event.active.id);
+  };
+
+  const handleDragEnd = (event) => {
+    const { active, over } = event;
+    setActiveId(null);
+
+    if (active.id !== over.id) {
+      const oldIndex = sortedActivities.findIndex(activity => activity.id === active.id);
+      const newIndex = sortedActivities.findIndex(activity => activity.id === over.id);
+      
+      reorderActivities(oldIndex, newIndex);
     }
   };
 
@@ -125,83 +258,47 @@ const ActivityManager = ({ isOpen, onClose }) => {
                 No activities yet. Add your first activity above!
               </p>
             ) : (
-              sortedActivities.map((activity, index) => (
-                <div
-                  key={activity.id}
-                  className="flex items-center gap-3 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600"
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragStart={handleDragStart}
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext
+                  items={sortedActivities.map(activity => activity.id)}
+                  strategy={verticalListSortingStrategy}
                 >
-                  {/* Reorder Buttons */}
-                  <div className="flex flex-col gap-1">
-                    <button
-                      onClick={() => moveActivityUp(activity.id)}
-                      disabled={index === 0}
-                      className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 disabled:opacity-30 disabled:cursor-not-allowed"
-                    >
-                      <ChevronUp className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => moveActivityDown(activity.id)}
-                      disabled={index === sortedActivities.length - 1}
-                      className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 disabled:opacity-30 disabled:cursor-not-allowed"
-                    >
-                      <ChevronDown className="w-4 h-4" />
-                    </button>
-                  </div>
-
-                  {/* Activity Name */}
-                  <div className="flex-1">
-                    {editingId === activity.id ? (
-                      <input
-                        type="text"
-                        value={editingName}
-                        onChange={(e) => setEditingName(e.target.value)}
-                        className="w-full px-3 py-2 border border-blue-500 rounded-lg bg-white dark:bg-gray-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        onKeyPress={(e) => e.key === 'Enter' && handleSaveEdit()}
-                        autoFocus
+                  <div className="space-y-2">
+                    {sortedActivities.map((activity, index) => (
+                      <SortableActivityItem
+                        key={activity.id}
+                        activity={activity}
+                        index={index}
+                        editingId={editingId}
+                        editingName={editingName}
+                        onStartEdit={handleStartEdit}
+                        onSaveEdit={handleSaveEdit}
+                        onCancelEdit={handleCancelEdit}
+                        onDelete={handleDeleteActivity}
+                        onEditingNameChange={(e) => setEditingName(e.target.value)}
                       />
-                    ) : (
-                      <span className="text-gray-900 dark:text-white font-medium">
-                        {activity.name}
+                    ))}
+                  </div>
+                </SortableContext>
+                
+                <DragOverlay>
+                  {activeId ? (
+                    <div className="flex items-center gap-3 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border-2 border-blue-300 dark:border-blue-600 shadow-lg">
+                      <div className="p-1 text-blue-400">
+                        <GripVertical className="w-4 h-4" />
+                      </div>
+                      <span className="text-blue-900 dark:text-blue-100 font-medium">
+                        {sortedActivities.find(activity => activity.id === activeId)?.name}
                       </span>
-                    )}
-                  </div>
-
-                  {/* Action Buttons */}
-                  <div className="flex gap-1">
-                    {editingId === activity.id ? (
-                      <>
-                        <button
-                          onClick={handleSaveEdit}
-                          className="p-2 text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300"
-                        >
-                          <Save className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={handleCancelEdit}
-                          className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        <button
-                          onClick={() => handleStartEdit(activity)}
-                          className="p-2 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
-                        >
-                          <Edit3 className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteActivity(activity.id)}
-                          className="p-2 text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </>
-                    )}
-                  </div>
-                </div>
-              ))
+                    </div>
+                  ) : null}
+                </DragOverlay>
+              </DndContext>
             )}
           </div>
         </div>
