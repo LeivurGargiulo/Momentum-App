@@ -10,7 +10,9 @@ A mobile-first Progressive Web App (PWA) for tracking daily activities and build
 - ✅ **Dark Mode Support**: Toggle between light and dark themes
 - ✅ **Activity Management**: Add, edit, delete, and reorder activities
 - ✅ **Daily Tracking**: Mark activities as complete for each day
-- ✅ **Statistics**: View completion rates and activity performance
+- ✅ **Mood & Energy Tracking**: Log daily mood and energy levels with intuitive UI
+- ✅ **Statistics & Analytics**: View completion rates, mood trends, and energy patterns
+- ✅ **Correlation Analysis**: See how activities affect your mood and energy
 - ✅ **Offline-First**: Works without internet connection
 - ✅ **Auto-Updates**: Notifies when new versions are available
 - ✅ **Multi-Language Support**: English and Spanish with easy language switching
@@ -28,6 +30,44 @@ A mobile-first Progressive Web App (PWA) for tracking daily activities and build
 ### Language Switching
 
 Users can easily switch between languages in the Settings page. The language preference is saved in localStorage and persists between sessions.
+
+## Mood & Energy Tracking
+
+Momentum now includes comprehensive mood and energy tracking features to help you understand your daily patterns and how activities affect your well-being.
+
+### Daily Mood Tracking
+
+- **8 Mood Options**: Choose from Happy 😊, Sad 😢, Anxious 😰, Calm 😌, Neutral 😐, Excited 🤩, Tired 😴, and Frustrated 😤
+- **Visual Selection**: Intuitive emoji-based mood selection with color-coded options
+- **Daily Summary**: See your selected mood prominently displayed in the daily summary
+
+### Energy Level Tracking
+
+- **5-Level Scale**: Rate your energy from 1 (Very Low) to 5 (Very High)
+- **Visual Indicators**: Battery icons and color-coded energy levels
+- **Real-time Display**: See your current energy level with descriptive labels
+
+### Analytics & Insights
+
+- **Trend Analysis**: View mood and energy trends over time (week, month, all-time)
+- **Correlation Analysis**: Discover how completing specific activities affects your mood and energy
+- **Statistical Overview**: See average mood and energy levels with detailed breakdowns
+- **Interactive Charts**: Line charts showing mood and energy fluctuations over time
+
+### How It Works
+
+1. **Daily Logging**: On the Today screen, you'll find a new "Mood & Energy" section
+2. **Quick Selection**: Tap to select your mood and energy level for the day
+3. **Automatic Saving**: Your selections are automatically saved to localStorage
+4. **View Trends**: Check the Statistics page to see patterns and correlations
+5. **Data Persistence**: All mood and energy data is included in backups and exports
+
+### Privacy & Data
+
+- **Local Storage**: All mood and energy data is stored locally on your device
+- **No Cloud Sync**: Your personal data never leaves your device
+- **Backup Included**: Mood and energy data is included in all data exports
+- **Complete Control**: You can clear all data including mood/energy tracking at any time
 
 ## Data Backup & Restore
 

@@ -37,6 +37,9 @@ export const strings = {
   notes: 'Notes',
   notesPlaceholder: 'How are you feeling today? Any thoughts or reflections...',
   saveNotes: 'Save Notes',
+  moodAndEnergy: 'Mood & Energy',
+  todaySummary: 'Today\'s Summary',
+  activitiesCompleted: 'activities completed',
   
   // Date navigation
   previousDay: 'Previous day',
@@ -48,12 +51,33 @@ export const strings = {
   daily: 'Daily',
   weekly: 'Weekly',
   monthly: 'Monthly',
+  week: 'Week',
+  month: 'Month',
+  allTime: 'All Time',
   mostCompleted: 'Most Completed',
   leastCompleted: 'Least Completed',
   totalActivities: 'Total Activities',
   completedActivities: 'Completed Activities',
   completionPercentage: 'Completion %',
   noData: 'No data available',
+  average: 'average',
+  averageMood: 'Average Mood',
+  averageEnergy: 'Average Energy',
+  moodTrend: 'Mood Trend',
+  energyTrend: 'Energy Trend',
+  moodEnergyCorrelation: 'Mood & Energy Correlation',
+  correlationDescription: 'See how your mood and energy levels correlate with activity completion',
+  moodEnergyTimeRange: 'Mood & Energy Time Range',
+  outOf8: 'out of 8',
+  outOf5: 'out of 5',
+  times: 'times',
+  byActivity: 'by Activity',
+  overallProgress: 'Overall Progress',
+  configured: 'configured',
+  topActivity: 'top activity',
+  consecutiveDays: 'consecutive days',
+  day: 'day',
+  days: 'days',
   
   // Settings
   exportData: 'Export Data',
@@ -83,4 +107,29 @@ export const strings = {
   // About
   appDescription: 'Momentum helps you build positive habits and track your daily progress. Build momentum, one day at a time.',
   madeWith: 'Made with ❤️ for better mental health',
+  
+  // Mood tracking
+  mood: {
+    howAreYouFeeling: 'How are you feeling today?',
+    happy: 'Happy',
+    sad: 'Sad',
+    anxious: 'Anxious',
+    calm: 'Calm',
+    neutral: 'Neutral',
+    excited: 'Excited',
+    tired: 'Tired',
+    frustrated: 'Frustrated',
+  },
+  
+  // Energy tracking
+  energy: {
+    howIsYourEnergy: 'How is your energy level today?',
+    veryLow: 'Very Low',
+    low: 'Low',
+    medium: 'Medium',
+    high: 'High',
+    veryHigh: 'Very High',
+    currentLevel: 'Current Level',
+    energy: 'Energy',
+  },
 };

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
-import { ChevronLeft, ChevronRight, Calendar, CheckCircle, Circle, Save, Plus, GripVertical } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Calendar, CheckCircle, Circle, Save, Plus, GripVertical, Heart, Battery } from 'lucide-react';
 import {
   DndContext,
   closestCenter,
@@ -23,6 +23,8 @@ import { CSS } from '@dnd-kit/utilities';
 import useStore from '../store/useStore';
 import ActivityManager from './ActivityManager';
 import UpcomingReminders from './UpcomingReminders';
+import MoodSelector from './MoodSelector';
+import EnergySlider from './EnergySlider';
 
 // Sortable Activity Item Component for Today
 const SortableTodayActivityItem = ({ activity, isCompleted, onToggle }) => {
@@ -93,6 +95,8 @@ const Today = () => {
     dailyData,
     toggleActivity,
     updateNotes,
+    updateMood,
+    updateEnergy,
     goToPreviousDay,
     goToNextDay,
     goToToday,
@@ -101,13 +105,15 @@ const Today = () => {
   } = useStore();
 
   const dateKey = format(currentDate, 'yyyy-MM-dd');
-  const currentData = dailyData[dateKey] || { completed: [], notes: '' };
+  const currentData = dailyData[dateKey] || { completed: [], notes: '', mood: null, energy: null };
   const isToday = format(new Date(), 'yyyy-MM-dd') === dateKey;
 
   const [notes, setNotes] = useState(currentData.notes);
   const [isSavingNotes, setIsSavingNotes] = useState(false);
   const [showActivityManager, setShowActivityManager] = useState(false);
   const [activeId, setActiveId] = useState(null);
+  const [selectedMood, setSelectedMood] = useState(currentData.mood);
+  const [selectedEnergy, setSelectedEnergy] = useState(currentData.energy);
 
   const sortedActivities = getSortedActivities();
 
@@ -127,6 +133,16 @@ const Today = () => {
     setIsSavingNotes(true);
     updateNotes(notes);
     setTimeout(() => setIsSavingNotes(false), 1000);
+  };
+
+  const handleMoodChange = (mood) => {
+    setSelectedMood(mood);
+    updateMood(mood);
+  };
+
+  const handleEnergyChange = (energy) => {
+    setSelectedEnergy(energy);
+    updateEnergy(energy);
   };
 
   const handleDragStart = (event) => {
@@ -208,6 +224,66 @@ const Today = () => {
       <div className="max-w-md mx-auto px-4 py-6">
         {/* Upcoming Reminders */}
         <UpcomingReminders />
+
+        {/* Mood & Energy Tracking */}
+        <div className="card p-6 mb-6">
+          <div className="flex items-center gap-2 mb-4">
+            <Heart className="w-5 h-5 text-pink-600 dark:text-pink-400" />
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+              {t('dailyTracking.moodAndEnergy')}
+            </h2>
+          </div>
+          
+          <div className="space-y-6">
+            {/* Mood Selector */}
+            <MoodSelector 
+              selectedMood={selectedMood}
+              onMoodChange={handleMoodChange}
+            />
+            
+            {/* Energy Slider */}
+            <EnergySlider 
+              energyLevel={selectedEnergy}
+              onEnergyChange={handleEnergyChange}
+            />
+          </div>
+          
+          {/* Daily Summary */}
+          {(selectedMood || selectedEnergy) && (
+            <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+              <h3 className="text-sm font-medium text-blue-900 dark:text-blue-100 mb-2">
+                {t('dailyTracking.todaySummary')}
+              </h3>
+              <div className="flex items-center gap-4 text-sm">
+                {selectedMood && (
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg">
+                      {selectedMood === 'happy' && '😊'}
+                      {selectedMood === 'sad' && '😢'}
+                      {selectedMood === 'anxious' && '😰'}
+                      {selectedMood === 'calm' && '😌'}
+                      {selectedMood === 'neutral' && '😐'}
+                      {selectedMood === 'excited' && '🤩'}
+                      {selectedMood === 'tired' && '😴'}
+                      {selectedMood === 'frustrated' && '😤'}
+                    </span>
+                    <span className="text-blue-800 dark:text-blue-200">
+                      {t(`mood.${selectedMood}`)}
+                    </span>
+                  </div>
+                )}
+                {selectedEnergy && (
+                  <div className="flex items-center gap-2">
+                    <Battery className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                    <span className="text-blue-800 dark:text-blue-200">
+                      {selectedEnergy}/5 {t('energy.energy')}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* Completion Progress */}
         <div className="card p-6 mb-6">

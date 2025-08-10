@@ -41,10 +41,10 @@ export const loadDailyData = (dateKey) => {
   try {
     const stored = localStorage.getItem(DAILY_DATA_KEY);
     const allData = stored ? JSON.parse(stored) : {};
-    return allData[dateKey] || { completed: [], notes: '' };
+    return allData[dateKey] || { completed: [], notes: '', mood: null, energy: null };
   } catch (error) {
     console.error('Error loading daily data:', error);
-    return { completed: [], notes: '' };
+    return { completed: [], notes: '', mood: null, energy: null };
   }
 };
 
