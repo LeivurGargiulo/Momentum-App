@@ -73,8 +73,7 @@ const ShareStats = ({ timeRange }) => {
       try {
         await navigator.share({
           title: 'Momentum - My Activity Progress',
-          text: shareText,
-          url: window.location.href
+          text: shareText
         });
         showToast(t('statistics.shareSuccess'));
       } catch (error) {
