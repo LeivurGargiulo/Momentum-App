@@ -13,31 +13,46 @@ export default defineConfig({
       },
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
       manifest: {
-        name: 'Momentum',
+        name: 'Momentum - Daily Activity Tracker',
         short_name: 'Momentum',
-        description: 'Track your daily activities and build momentum',
+        description: 'Track your daily activities and build momentum, one day at a time',
         theme_color: '#3b82f6',
-        background_color: '#ffffff',
+        background_color: '#f9fafb',
         display: 'standalone',
         orientation: 'portrait',
         scope: '/',
         start_url: '/',
+        categories: ['productivity', 'health', 'lifestyle'],
+        lang: 'en',
+        dir: 'ltr',
+        prefer_related_applications: false,
         icons: [
           {
             src: 'pwa-192x192.png',
             sizes: '192x192',
-            type: 'image/png'
+            type: 'image/png',
+            purpose: 'any'
           },
           {
             src: 'pwa-512x512.png',
             sizes: '512x512',
-            type: 'image/png'
+            type: 'image/png',
+            purpose: 'any'
           },
           {
             src: 'pwa-512x512.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'any maskable'
+          }
+        ],
+        screenshots: [
+          {
+            src: 'pwa-512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            form_factor: 'wide',
+            label: 'Momentum App Screenshot'
           }
         ]
       }
