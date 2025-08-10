@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import useStore from './store/useStore';
+import { initializeReminders } from './utils/reminders';
 import Onboarding from './components/Onboarding';
 import Today from './components/Today';
 import Statistics from './components/Statistics';
@@ -20,6 +21,9 @@ function App() {
   useEffect(() => {
     initialize();
     setIsInitialized(true);
+    
+    // Initialize reminders system
+    initializeReminders();
   }, [initialize]);
 
   // Show loading while initializing

@@ -107,7 +107,9 @@
     "deletePermanently": "Delete all your data permanently",
     "exporting": "Exporting...",
     "importing": "Importing...",
-    "clearing": "Clearing..."
+    "clearing": "Clearing...",
+    "reminders": "Reminders",
+    "remindersDescription": "Set up daily reminders and notifications"
   },
   "messages": {
     "dataExported": "Data exported successfully",
@@ -124,10 +126,14 @@
     "errorSavingData": "Error saving data",
     "errorExportingData": "Error exporting data",
     "errorImportingData": "Error importing data",
-    "errorClearingData": "Error clearing data"
+    "errorClearingData": "Error clearing data",
+    "invalidBackupFile": "Invalid backup file: {{error}}",
+    "errorReadingFile": "Error reading file"
   },
   "common": {
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "cancel": "Cancel",
+    "processing": "Processing..."
   },
   "about": {
     "appDescription": "Momentum helps you build positive habits and track your daily progress. Build momentum, one day at a time.",
@@ -158,5 +164,58 @@
     "timeRangeMonthly": "month",
     "streakText": "Currently on a {{streak}} day streak!",
     "streakTextOne": "Currently on a {{streak}} day streak!"
+  },
+  "import": {
+    "resolveConflicts": "Resolve Import Conflicts",
+    "conflictsFound": "{{count}} conflicts found",
+    "activityConflicts": "Activity Conflicts ({{count}})",
+    "dailyDataConflicts": "Daily Data Conflicts ({{count}})",
+    "settingsConflicts": "Settings Conflicts",
+    "conflictSameId": "Activity with same ID exists",
+    "conflictSameName": "Activity with same name exists",
+    "conflictSameDate": "Data for same date exists",
+    "conflictSettings": "Settings already exist",
+    "activityConflictDescription": "An activity with the same ID or name already exists in your data.",
+    "dailyDataConflictDescription": "You already have data for {{date}}. Choose how to handle this conflict.",
+    "settingsConflictDescription": "You already have settings configured. Choose whether to keep existing settings or overwrite them.",
+    "existing": "Existing",
+    "imported": "Imported",
+    "completedActivities": "{{count}} activities completed",
+    "hasNotes": "Has notes",
+    "skipImported": "Skip imported data",
+    "overwriteExisting": "Overwrite existing data",
+    "mergeData": "Merge data (combine activities and notes)",
+    "keepExistingSettings": "Keep existing settings",
+    "overwriteSettings": "Overwrite with imported settings",
+    "applyResolutions": "Apply Resolutions"
+  },
+  "reminders": {
+    "title": "Reminders",
+    "addReminder": "Add Reminder",
+    "editReminder": "Edit Reminder",
+    "label": "Label",
+    "labelPlaceholder": "e.g., Morning Check-in",
+    "time": "Time",
+    "message": "Message",
+    "messagePlaceholder": "Optional custom message...",
+    "optional": "Optional",
+    "add": "Add",
+    "save": "Save",
+    "cancel": "Cancel",
+    "allReminders": "All Reminders",
+    "noReminders": "No reminders set up yet",
+    "confirmDelete": "Are you sure you want to delete this reminder?",
+    "upcomingToday": "Upcoming Today",
+    "moreUpcoming": "{{count}} more upcoming",
+    "dismiss": "Dismiss",
+    "notificationPermission": "Notification Permission",
+    "permissionGranted": "Notifications are enabled",
+    "permissionDenied": "Notifications are blocked",
+    "permissionDefault": "Notifications permission needed",
+    "enableNotifications": "Enable",
+    "notificationsNotSupported": "Notifications Not Supported",
+    "notificationsNotSupportedDescription": "Your browser doesn't support notifications. Reminders will still work but won't show notifications.",
+    "limitationsTitle": "Reminder Limitations",
+    "limitationsDescription": "Reminders only work when the app is open or running in the background. For best results, keep the app open or install it as a PWA."
   }
 }

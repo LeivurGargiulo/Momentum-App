@@ -22,6 +22,7 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import useStore from '../store/useStore';
 import ActivityManager from './ActivityManager';
+import UpcomingReminders from './UpcomingReminders';
 
 // Sortable Activity Item Component for Today
 const SortableTodayActivityItem = ({ activity, isCompleted, onToggle }) => {
@@ -205,6 +206,9 @@ const Today = () => {
       </div>
 
       <div className="max-w-md mx-auto px-4 py-6">
+        {/* Upcoming Reminders */}
+        <UpcomingReminders />
+
         {/* Completion Progress */}
         <div className="card p-6 mb-6">
           <div className="flex items-center justify-between mb-2">

@@ -107,7 +107,9 @@
     "deletePermanently": "Eliminar todos tus datos permanentemente",
     "exporting": "Exportando...",
     "importing": "Importando...",
-    "clearing": "Borrando..."
+    "clearing": "Borrando...",
+    "reminders": "Recordatorios",
+    "remindersDescription": "Configurar recordatorios diarios y notificaciones"
   },
   "messages": {
     "dataExported": "Datos exportados exitosamente",
@@ -124,10 +126,14 @@
     "errorSavingData": "Error al guardar datos",
     "errorExportingData": "Error al exportar datos",
     "errorImportingData": "Error al importar datos",
-    "errorClearingData": "Error al borrar datos"
+    "errorClearingData": "Error al borrar datos",
+    "invalidBackupFile": "Archivo de respaldo inválido: {{error}}",
+    "errorReadingFile": "Error al leer archivo"
   },
   "common": {
-    "loading": "Cargando..."
+    "loading": "Cargando...",
+    "cancel": "Cancelar",
+    "processing": "Procesando..."
   },
   "about": {
     "appDescription": "Momentum te ayuda a construir hábitos positivos y rastrear tu progreso diario. Construye momentum, un día a la vez.",
@@ -158,5 +164,58 @@
     "timeRangeMonthly": "mes",
     "streakText": "¡Actualmente en una racha de {{streak}} días!",
     "streakTextOne": "¡Actualmente en una racha de {{streak}} día!"
+  },
+  "import": {
+    "resolveConflicts": "Resolver Conflictos de Importación",
+    "conflictsFound": "{{count}} conflictos encontrados",
+    "activityConflicts": "Conflictos de Actividades ({{count}})",
+    "dailyDataConflicts": "Conflictos de Datos Diarios ({{count}})",
+    "settingsConflicts": "Conflictos de Configuración",
+    "conflictSameId": "Existe una actividad con el mismo ID",
+    "conflictSameName": "Existe una actividad con el mismo nombre",
+    "conflictSameDate": "Ya existen datos para la misma fecha",
+    "conflictSettings": "Ya existen configuraciones",
+    "activityConflictDescription": "Una actividad con el mismo ID o nombre ya existe en tus datos.",
+    "dailyDataConflictDescription": "Ya tienes datos para {{date}}. Elige cómo manejar este conflicto.",
+    "settingsConflictDescription": "Ya tienes configuraciones configuradas. Elige si mantener las configuraciones existentes o sobrescribirlas.",
+    "existing": "Existente",
+    "imported": "Importado",
+    "completedActivities": "{{count}} actividades completadas",
+    "hasNotes": "Tiene notas",
+    "skipImported": "Omitir datos importados",
+    "overwriteExisting": "Sobrescribir datos existentes",
+    "mergeData": "Combinar datos (combinar actividades y notas)",
+    "keepExistingSettings": "Mantener configuraciones existentes",
+    "overwriteSettings": "Sobrescribir con configuraciones importadas",
+    "applyResolutions": "Aplicar Resoluciones"
+  },
+  "reminders": {
+    "title": "Recordatorios",
+    "addReminder": "Añadir Recordatorio",
+    "editReminder": "Editar Recordatorio",
+    "label": "Etiqueta",
+    "labelPlaceholder": "ej., Revisión Matutina",
+    "time": "Hora",
+    "message": "Mensaje",
+    "messagePlaceholder": "Mensaje personalizado opcional...",
+    "optional": "Opcional",
+    "add": "Añadir",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "allReminders": "Todos los Recordatorios",
+    "noReminders": "Aún no hay recordatorios configurados",
+    "confirmDelete": "¿Estás seguro de que quieres eliminar este recordatorio?",
+    "upcomingToday": "Próximos Hoy",
+    "moreUpcoming": "{{count}} más próximos",
+    "dismiss": "Descartar",
+    "notificationPermission": "Permiso de Notificaciones",
+    "permissionGranted": "Las notificaciones están habilitadas",
+    "permissionDenied": "Las notificaciones están bloqueadas",
+    "permissionDefault": "Se necesita permiso de notificaciones",
+    "enableNotifications": "Habilitar",
+    "notificationsNotSupported": "Notificaciones No Soportadas",
+    "notificationsNotSupportedDescription": "Tu navegador no soporta notificaciones. Los recordatorios seguirán funcionando pero no mostrarán notificaciones.",
+    "limitationsTitle": "Limitaciones de Recordatorios",
+    "limitationsDescription": "Los recordatorios solo funcionan cuando la aplicación está abierta o ejecutándose en segundo plano. Para mejores resultados, mantén la aplicación abierta o instálala como PWA."
   }
 }

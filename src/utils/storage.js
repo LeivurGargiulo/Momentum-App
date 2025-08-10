@@ -2,6 +2,7 @@
 const ACTIVITIES_KEY = 'activity-tracker-activities';
 const DAILY_DATA_KEY = 'activity-tracker-daily-data';
 const SETTINGS_KEY = 'activity-tracker-settings';
+const REMINDERS_KEY = 'momentum-reminders';
 
 // Helper to format date as YYYY-MM-DD
 export const formatDateKey = (date) => {
@@ -94,19 +95,133 @@ export const saveSettings = (settings) => {
   }
 };
 
-// Export all data as JSON
+// Validate backup data structure
+export const validateBackupData = (data) => {
+  try {
+    // Check if data is an object
+    if (!data || typeof data !== 'object') {
+      return { isValid: false, error: 'Invalid data format' };
+    }
+
+    // Check for required fields
+    const requiredFields = ['activities', 'dailyData', 'settings', 'exportDate', 'version'];
+    for (const field of requiredFields) {
+      if (!(field in data)) {
+        return { isValid: false, error: `Missing required field: ${field}` };
+      }
+    }
+
+    // Validate activities array
+    if (!Array.isArray(data.activities)) {
+      return { isValid: false, error: 'Activities must be an array' };
+    }
+
+    // Validate dailyData object
+    if (typeof data.dailyData !== 'object' || data.dailyData === null) {
+      return { isValid: false, error: 'Daily data must be an object' };
+    }
+
+    // Validate settings object
+    if (typeof data.settings !== 'object' || data.settings === null) {
+      return { isValid: false, error: 'Settings must be an object' };
+    }
+
+    // Validate export date
+    if (isNaN(new Date(data.exportDate).getTime())) {
+      return { isValid: false, error: 'Invalid export date' };
+    }
+
+    return { isValid: true };
+  } catch (error) {
+    return { isValid: false, error: 'Data validation failed' };
+  }
+};
+
+// Detect conflicts between existing and imported data
+export const detectConflicts = (importedData) => {
+  const conflicts = {
+    activities: [],
+    dailyData: [],
+    settings: false
+  };
+
+  const existingActivities = loadActivities();
+  const existingDailyData = loadAllDailyData();
+  const existingSettings = loadSettings();
+
+  // Check for activity conflicts (same ID or name)
+  importedData.activities.forEach(importedActivity => {
+    const existingActivity = existingActivities.find(a => a.id === importedActivity.id);
+    if (existingActivity) {
+      conflicts.activities.push({
+        type: 'id',
+        imported: importedActivity,
+        existing: existingActivity
+      });
+    } else {
+      const nameConflict = existingActivities.find(a => a.name === importedActivity.name);
+      if (nameConflict) {
+        conflicts.activities.push({
+          type: 'name',
+          imported: importedActivity,
+          existing: nameConflict
+        });
+      }
+    }
+  });
+
+  // Check for daily data conflicts (same date)
+  Object.keys(importedData.dailyData).forEach(dateKey => {
+    if (existingDailyData[dateKey]) {
+      conflicts.dailyData.push({
+        dateKey,
+        imported: importedData.dailyData[dateKey],
+        existing: existingDailyData[dateKey]
+      });
+    }
+  });
+
+  // Check for settings conflicts (if settings exist)
+  if (Object.keys(existingSettings).length > 0) {
+    conflicts.settings = true;
+  }
+
+  return conflicts;
+};
+
+// Export all data as JSON with enhanced structure
 export const exportData = () => {
   try {
     const activities = loadActivities();
     const dailyData = loadAllDailyData();
     const settings = loadSettings();
     
+    // Load reminders from localStorage
+    let reminders = [];
+    try {
+      const storedReminders = localStorage.getItem(REMINDERS_KEY);
+      reminders = storedReminders ? JSON.parse(storedReminders) : [];
+    } catch (error) {
+      console.error('Error loading reminders for export:', error);
+    }
+    
     const exportData = {
       activities,
       dailyData,
       settings,
+      reminders,
       exportDate: new Date().toISOString(),
-      version: '1.0.0'
+      version: '2.0.0',
+      appName: 'Momentum',
+      dataSummary: {
+        totalActivities: activities.length,
+        totalDays: Object.keys(dailyData).length,
+        totalReminders: reminders.length,
+        dateRange: {
+          start: Object.keys(dailyData).length > 0 ? Math.min(...Object.keys(dailyData)) : null,
+          end: Object.keys(dailyData).length > 0 ? Math.max(...Object.keys(dailyData)) : null
+        }
+      }
     };
     
     return JSON.stringify(exportData, null, 2);
@@ -116,27 +231,89 @@ export const exportData = () => {
   }
 };
 
-// Import data from JSON
-export const importData = (jsonData) => {
+// Import data with conflict resolution
+export const importData = (jsonData, conflictResolution = {}) => {
   try {
     const data = JSON.parse(jsonData);
     
-    if (data.activities) {
-      saveActivities(data.activities);
+    // Validate the imported data
+    const validation = validateBackupData(data);
+    if (!validation.isValid) {
+      throw new Error(validation.error);
+    }
+
+    // Detect conflicts
+    const conflicts = detectConflicts(data);
+    
+    // Apply conflict resolution
+    let activitiesToImport = data.activities;
+    let dailyDataToImport = data.dailyData;
+    let settingsToImport = data.settings;
+
+    // Handle activity conflicts
+    if (conflicts.activities.length > 0) {
+      activitiesToImport = data.activities.filter(importedActivity => {
+        const conflict = conflicts.activities.find(c => c.imported.id === importedActivity.id);
+        if (conflict) {
+          return conflictResolution.activities?.[importedActivity.id] === 'overwrite';
+        }
+        return true;
+      });
+    }
+
+    // Handle daily data conflicts
+    if (conflicts.dailyData.length > 0) {
+      Object.keys(data.dailyData).forEach(dateKey => {
+        const conflict = conflicts.dailyData.find(c => c.dateKey === dateKey);
+        if (conflict) {
+          const resolution = conflictResolution.dailyData?.[dateKey];
+          if (resolution === 'skip') {
+            delete dailyDataToImport[dateKey];
+          } else if (resolution === 'merge') {
+            // Merge completed activities and notes
+            const existing = conflict.existing;
+            const imported = conflict.imported;
+            dailyDataToImport[dateKey] = {
+              completed: [...new Set([...existing.completed, ...imported.completed])],
+              notes: existing.notes + (imported.notes ? `\n\n--- Merged from backup ---\n${imported.notes}` : '')
+            };
+          }
+          // If resolution is 'overwrite', keep the imported data as is
+        }
+      });
+    }
+
+    // Handle settings conflicts
+    if (conflicts.settings && conflictResolution.settings === 'skip') {
+      settingsToImport = null;
+    }
+
+    // Apply the data
+    if (activitiesToImport) {
+      saveActivities(activitiesToImport);
     }
     
-    if (data.dailyData) {
-      localStorage.setItem(DAILY_DATA_KEY, JSON.stringify(data.dailyData));
+    if (dailyDataToImport) {
+      localStorage.setItem(DAILY_DATA_KEY, JSON.stringify(dailyDataToImport));
     }
     
-    if (data.settings) {
-      saveSettings(data.settings);
+    if (settingsToImport) {
+      saveSettings(settingsToImport);
     }
     
-    return true;
+    // Import reminders if available
+    if (data.reminders && Array.isArray(data.reminders)) {
+      try {
+        localStorage.setItem(REMINDERS_KEY, JSON.stringify(data.reminders));
+      } catch (error) {
+        console.error('Error importing reminders:', error);
+      }
+    }
+    
+    return { success: true, conflicts };
   } catch (error) {
     console.error('Error importing data:', error);
-    return false;
+    return { success: false, error: error.message };
   }
 };
 
@@ -146,9 +323,18 @@ export const clearAllData = () => {
     localStorage.removeItem(ACTIVITIES_KEY);
     localStorage.removeItem(DAILY_DATA_KEY);
     localStorage.removeItem(SETTINGS_KEY);
+    localStorage.removeItem(REMINDERS_KEY);
     return true;
   } catch (error) {
     console.error('Error clearing data:', error);
     return false;
   }
+};
+
+// Generate backup filename with timestamp
+export const generateBackupFilename = () => {
+  const now = new Date();
+  const dateStr = now.toISOString().split('T')[0];
+  const timeStr = now.toTimeString().split(' ')[0].replace(/:/g, '-');
+  return `momentum_backup_${dateStr}_${timeStr}.json`;
 };
