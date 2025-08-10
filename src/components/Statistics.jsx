@@ -38,10 +38,10 @@ const Statistics = () => {
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-            {t('navigation.stats')}
+            {t('statistics.title')}
           </h1>
           <p className="text-gray-600 dark:text-gray-300">
-            Track your progress and see how you're doing
+            {t('statistics.subtitle')}
           </p>
         </div>
 
@@ -50,7 +50,7 @@ const Statistics = () => {
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-4">
               <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                Time Range:
+                {t('statistics.timeRange')}
               </span>
               <div className="flex gap-2">
                 {timeRangeOptions.map((option) => {
@@ -92,7 +92,7 @@ const Statistics = () => {
                     {t('statistics.completionRate')}
                   </h3>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
-                    {timeRange} average
+                    {timeRange} {t('statistics.average')}
                   </p>
                 </div>
               </div>
@@ -114,7 +114,7 @@ const Statistics = () => {
                     {t('statistics.currentStreak')}
                   </h3>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Consecutive days
+                    {t('statistics.consecutiveDays')}
                   </p>
                 </div>
               </div>
@@ -139,7 +139,7 @@ const Statistics = () => {
                     {t('statistics.totalActivities')}
                   </h3>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Configured
+                    {t('statistics.configured')}
                   </p>
                 </div>
               </div>
@@ -161,7 +161,7 @@ const Statistics = () => {
                     {t('statistics.mostCompleted')}
                   </h3>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Top activity
+                    {t('statistics.topActivity')}
                   </p>
                 </div>
               </div>
@@ -177,7 +177,7 @@ const Statistics = () => {
           {/* Activity Completion Chart */}
           <div className="card p-6">
             <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
-              {t('statistics.completionRate')} by Activity
+              {t('statistics.completionRate')} {t('statistics.byActivity')}
             </h3>
             {activityStats.length > 0 ? (
               <ResponsiveContainer width="100%" height={300}>
@@ -205,7 +205,7 @@ const Statistics = () => {
           {/* Overall Progress Pie Chart */}
           <div className="card p-6">
             <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
-              Overall Progress
+              {t('statistics.overallProgress')}
             </h3>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>

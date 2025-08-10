@@ -195,7 +195,7 @@ const ActivityManager = ({ isOpen, onClose }) => {
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-            Manage Activities
+            {t('settings.manageActivities')}
           </h2>
           <button
             onClick={onClose}

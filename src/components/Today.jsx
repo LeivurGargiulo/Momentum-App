@@ -160,7 +160,7 @@ const Today = () => {
               Momentum
             </h1>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Build momentum, one day at a time
+              {t('dailyTracking.subtitle')}
             </p>
           </div>
 
@@ -223,7 +223,7 @@ const Today = () => {
             />
           </div>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-            {currentData.completed.length} of {sortedActivities.length} activities completed
+            {currentData.completed.length} of {sortedActivities.length} {t('dailyTracking.activitiesCompleted')}
           </p>
         </div>
 

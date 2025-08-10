@@ -74,7 +74,7 @@ const Onboarding = () => {
               </h2>
               
               <p className="text-gray-600 dark:text-gray-300 mb-6">
-                Add some activities you'd like to track daily. You can always add more later.
+                {t('onboarding.addActivitiesDescription')}
               </p>
 
               {/* Add Activity Input */}
@@ -123,7 +123,7 @@ const Onboarding = () => {
                   onClick={handleUseDefaults}
                   className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
                 >
-                  Use Defaults
+                  {t('onboarding.useDefaults')}
                 </button>
                 <button
                   onClick={() => setStep(2)}
@@ -147,10 +147,10 @@ const Onboarding = () => {
                   <Check className="w-8 h-8 text-green-600 dark:text-green-400" />
                 </div>
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                  Ready to Start!
+                  {t('onboarding.readyToStart')}
                 </h2>
                 <p className="text-gray-600 dark:text-gray-300">
-                  You've added {activities.length} activities. You're all set to start tracking your daily progress!
+                  {t('onboarding.readyToStartDescription', { count: activities.length })}
                 </p>
               </div>
 
