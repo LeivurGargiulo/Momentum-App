@@ -176,7 +176,7 @@ const ShareStats = ({ timeRange }) => {
                   ) : (
                     <Copy className="w-4 h-4" />
                   )}
-                  {copySuccess ? 'Copied!' : t('statistics.copyToClipboard')}
+                  {copySuccess ? t('statistics.copied') : t('statistics.copyToClipboard')}
                 </button>
                 <button
                   onClick={() => setShowModal(false)}

@@ -43,8 +43,8 @@ const Statistics = () => {
   }));
 
   const pieChartData = [
-    { name: 'Completed', value: completionRate, color: '#10B981' },
-    { name: 'Remaining', value: 100 - completionRate, color: '#E5E7EB' },
+    { name: t('statistics.completed'), value: completionRate, color: '#10B981' },
+    { name: t('statistics.remaining'), value: 100 - completionRate, color: '#E5E7EB' },
   ];
 
   const timeRangeOptions = [
@@ -543,7 +543,7 @@ const Statistics = () => {
         {/* Activity List */}
         <div className="card p-6 mt-6">
           <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
-            {t('statistics.mostCompleted')} Activities
+            {t('statistics.mostCompleted')} {t('statistics.activities')}
           </h3>
           {activityStats.length > 0 ? (
             <div className="space-y-3">
@@ -565,7 +565,7 @@ const Statistics = () => {
                       {activity.count}
                     </span>
                     <span className="text-xs text-gray-500 dark:text-gray-400">
-                      times
+                      {t('statistics.times')}
                     </span>
                   </div>
                 </div>
