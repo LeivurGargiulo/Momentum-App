@@ -17,6 +17,8 @@ A mobile-first Progressive Web App (PWA) for tracking daily activities and build
 - ✅ **Localization**: Complete UI translation with react-i18next
 - ✅ **Data Backup & Restore**: Full offline data export/import with conflict resolution
 - ✅ **Conflict Resolution**: Smart handling of data conflicts during import
+- ✅ **Reminders & Notifications**: Daily reminders with browser notifications
+- ✅ **Smart Scheduling**: Automatic reminder checking and notification delivery
 
 ## Languages Supported
 
@@ -113,6 +115,64 @@ Backup files are standard JSON with the following structure:
 }
 ```
 
+## Reminders & Notifications
+
+Momentum includes a comprehensive reminders system with browser notifications to help you stay on track with your daily activities.
+
+### Setting Up Reminders
+
+1. **Navigate to Settings**: Open the app and go to the Settings page
+2. **Manage Reminders**: Tap the "Manage" button in the Reminders section
+3. **Add Reminders**: Create custom reminders with:
+   - **Label**: A descriptive name (e.g., "Morning Check-in")
+   - **Time**: When the reminder should fire (24-hour format)
+   - **Message**: Optional custom message for the notification
+
+### Default Reminders
+
+The app comes with two default reminders:
+- **Morning Check-in** (9:00 AM): "Time to check off today's activities!"
+- **Evening Review** (8:00 PM): "How did your day go? Review your progress."
+
+### Notification Permissions
+
+To receive notifications, you'll need to grant permission:
+
+1. **Enable Notifications**: When you first access reminders, tap "Enable" to request permission
+2. **Browser Settings**: If permission is denied, you can enable it later in your browser settings
+3. **Permission Status**: The app shows the current permission status in the reminders interface
+
+### How Reminders Work
+
+- **Scheduling**: Reminders are checked every minute while the app is open
+- **Notifications**: When a reminder time is reached, a browser notification is sent
+- **Auto-close**: Notifications automatically close after 5 seconds
+- **Duplicate Prevention**: The same reminder won't fire multiple times
+
+### Reminder Limitations
+
+**Important**: Reminders only work when the app is open or running in the background. This is a browser security limitation.
+
+**For best results**:
+- Keep the app open in a browser tab
+- Install the app as a PWA for background operation
+- Use the app regularly to ensure reminders are checked
+
+### Upcoming Reminders Display
+
+The main screen shows upcoming reminders for today:
+- **Next Reminder**: Displays the closest upcoming reminder with countdown
+- **Additional Reminders**: Shows up to 3 more upcoming reminders
+- **Dismissible**: You can dismiss the reminder display if needed
+- **Auto-update**: Updates every minute to show accurate timing
+
+### Managing Reminders
+
+- **Enable/Disable**: Toggle individual reminders on/off
+- **Edit**: Modify label, time, or message for any reminder
+- **Delete**: Remove reminders you no longer need
+- **Persistent**: All reminders are saved and persist across sessions
+
 ## PWA Installation
 
 ### On Android (Chrome/Edge)
@@ -177,6 +237,14 @@ The app includes comprehensive data management utilities. Key files:
 - `src/components/ImportConflictResolver.jsx` - Conflict resolution UI
 - `src/components/Settings.jsx` - Settings page with data management
 
+### Reminders & Notifications Development
+The app includes a complete reminders and notifications system. Key files:
+
+- `src/utils/reminders.js` - Core reminders functionality and notification handling
+- `src/components/Reminders.jsx` - Reminders management interface
+- `src/components/UpcomingReminders.jsx` - Upcoming reminders display on main screen
+- `src/App.jsx` - Initializes the reminders system on app startup
+
 ## Adding New Languages
 
 To add support for a new language:
@@ -232,6 +300,7 @@ The app uses nested translation keys for better organization:
 - `pwa.*` - PWA-specific text
 - `activityManager.*` - Activity management interface
 - `import.*` - Import/export and conflict resolution text
+- `reminders.*` - Reminders and notifications interface
 
 ## Data Storage
 
@@ -240,6 +309,7 @@ All user data is stored locally in the browser:
 - **Activities**: List of user-defined activities with IDs and order
 - **Daily Data**: Completion status and notes for each day
 - **Settings**: User preferences (dark mode, language, etc.)
+- **Reminders**: Custom reminders with times, labels, and messages
 
 ### Data Export/Import
 The app supports comprehensive data export and import via JSON files in the Settings section, including:
@@ -248,6 +318,7 @@ The app supports comprehensive data export and import via JSON files in the Sett
 - **Flexible Resolution**: Multiple options for handling conflicts
 - **Data Validation**: Ensures backup file integrity
 - **Metadata Tracking**: Includes export timestamps and version info
+- **Reminders Backup**: All reminders are included in backup/restore operations
 
 ## Deployment
 
@@ -273,6 +344,7 @@ The app works completely offline after the first load:
 - No network requests required for core functionality
 - Automatic updates when connection is restored
 - Full backup/restore functionality works offline
+- Reminders and notifications work entirely offline
 
 ## Browser Support
 

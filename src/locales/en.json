@@ -107,7 +107,9 @@
     "deletePermanently": "Delete all your data permanently",
     "exporting": "Exporting...",
     "importing": "Importing...",
-    "clearing": "Clearing..."
+    "clearing": "Clearing...",
+    "reminders": "Reminders",
+    "remindersDescription": "Set up daily reminders and notifications"
   },
   "messages": {
     "dataExported": "Data exported successfully",
@@ -186,5 +188,34 @@
     "keepExistingSettings": "Keep existing settings",
     "overwriteSettings": "Overwrite with imported settings",
     "applyResolutions": "Apply Resolutions"
+  },
+  "reminders": {
+    "title": "Reminders",
+    "addReminder": "Add Reminder",
+    "editReminder": "Edit Reminder",
+    "label": "Label",
+    "labelPlaceholder": "e.g., Morning Check-in",
+    "time": "Time",
+    "message": "Message",
+    "messagePlaceholder": "Optional custom message...",
+    "optional": "Optional",
+    "add": "Add",
+    "save": "Save",
+    "cancel": "Cancel",
+    "allReminders": "All Reminders",
+    "noReminders": "No reminders set up yet",
+    "confirmDelete": "Are you sure you want to delete this reminder?",
+    "upcomingToday": "Upcoming Today",
+    "moreUpcoming": "{{count}} more upcoming",
+    "dismiss": "Dismiss",
+    "notificationPermission": "Notification Permission",
+    "permissionGranted": "Notifications are enabled",
+    "permissionDenied": "Notifications are blocked",
+    "permissionDefault": "Notifications permission needed",
+    "enableNotifications": "Enable",
+    "notificationsNotSupported": "Notifications Not Supported",
+    "notificationsNotSupportedDescription": "Your browser doesn't support notifications. Reminders will still work but won't show notifications.",
+    "limitationsTitle": "Reminder Limitations",
+    "limitationsDescription": "Reminders only work when the app is open or running in the background. For best results, keep the app open or install it as a PWA."
   }
 }

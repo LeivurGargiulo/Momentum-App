@@ -107,7 +107,9 @@
     "deletePermanently": "Eliminar todos tus datos permanentemente",
     "exporting": "Exportando...",
     "importing": "Importando...",
-    "clearing": "Borrando..."
+    "clearing": "Borrando...",
+    "reminders": "Recordatorios",
+    "remindersDescription": "Configurar recordatorios diarios y notificaciones"
   },
   "messages": {
     "dataExported": "Datos exportados exitosamente",
@@ -186,5 +188,34 @@
     "keepExistingSettings": "Mantener configuraciones existentes",
     "overwriteSettings": "Sobrescribir con configuraciones importadas",
     "applyResolutions": "Aplicar Resoluciones"
+  },
+  "reminders": {
+    "title": "Recordatorios",
+    "addReminder": "Añadir Recordatorio",
+    "editReminder": "Editar Recordatorio",
+    "label": "Etiqueta",
+    "labelPlaceholder": "ej., Revisión Matutina",
+    "time": "Hora",
+    "message": "Mensaje",
+    "messagePlaceholder": "Mensaje personalizado opcional...",
+    "optional": "Opcional",
+    "add": "Añadir",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "allReminders": "Todos los Recordatorios",
+    "noReminders": "Aún no hay recordatorios configurados",
+    "confirmDelete": "¿Estás seguro de que quieres eliminar este recordatorio?",
+    "upcomingToday": "Próximos Hoy",
+    "moreUpcoming": "{{count}} más próximos",
+    "dismiss": "Descartar",
+    "notificationPermission": "Permiso de Notificaciones",
+    "permissionGranted": "Las notificaciones están habilitadas",
+    "permissionDenied": "Las notificaciones están bloqueadas",
+    "permissionDefault": "Se necesita permiso de notificaciones",
+    "enableNotifications": "Habilitar",
+    "notificationsNotSupported": "Notificaciones No Soportadas",
+    "notificationsNotSupportedDescription": "Tu navegador no soporta notificaciones. Los recordatorios seguirán funcionando pero no mostrarán notificaciones.",
+    "limitationsTitle": "Limitaciones de Recordatorios",
+    "limitationsDescription": "Los recordatorios solo funcionan cuando la aplicación está abierta o ejecutándose en segundo plano. Para mejores resultados, mantén la aplicación abierta o instálala como PWA."
   }
 }

@@ -2,6 +2,7 @@
 const ACTIVITIES_KEY = 'activity-tracker-activities';
 const DAILY_DATA_KEY = 'activity-tracker-daily-data';
 const SETTINGS_KEY = 'activity-tracker-settings';
+const REMINDERS_KEY = 'momentum-reminders';
 
 // Helper to format date as YYYY-MM-DD
 export const formatDateKey = (date) => {
@@ -195,16 +196,27 @@ export const exportData = () => {
     const dailyData = loadAllDailyData();
     const settings = loadSettings();
     
+    // Load reminders from localStorage
+    let reminders = [];
+    try {
+      const storedReminders = localStorage.getItem(REMINDERS_KEY);
+      reminders = storedReminders ? JSON.parse(storedReminders) : [];
+    } catch (error) {
+      console.error('Error loading reminders for export:', error);
+    }
+    
     const exportData = {
       activities,
       dailyData,
       settings,
+      reminders,
       exportDate: new Date().toISOString(),
       version: '2.0.0',
       appName: 'Momentum',
       dataSummary: {
         totalActivities: activities.length,
         totalDays: Object.keys(dailyData).length,
+        totalReminders: reminders.length,
         dateRange: {
           start: Object.keys(dailyData).length > 0 ? Math.min(...Object.keys(dailyData)) : null,
           end: Object.keys(dailyData).length > 0 ? Math.max(...Object.keys(dailyData)) : null
@@ -289,6 +301,15 @@ export const importData = (jsonData, conflictResolution = {}) => {
       saveSettings(settingsToImport);
     }
     
+    // Import reminders if available
+    if (data.reminders && Array.isArray(data.reminders)) {
+      try {
+        localStorage.setItem(REMINDERS_KEY, JSON.stringify(data.reminders));
+      } catch (error) {
+        console.error('Error importing reminders:', error);
+      }
+    }
+    
     return { success: true, conflicts };
   } catch (error) {
     console.error('Error importing data:', error);
@@ -302,6 +323,7 @@ export const clearAllData = () => {
     localStorage.removeItem(ACTIVITIES_KEY);
     localStorage.removeItem(DAILY_DATA_KEY);
     localStorage.removeItem(SETTINGS_KEY);
+    localStorage.removeItem(REMINDERS_KEY);
     return true;
   } catch (error) {
     console.error('Error clearing data:', error);
