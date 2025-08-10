@@ -34,7 +34,11 @@ const useStore = create((set, get) => ({
   
   // Activity management
   addActivity: (name) => {
-    const newActivity = { id: Date.now().toString(), name };
+    const newActivity = { 
+      id: Date.now().toString() + Math.random().toString(36).substr(2, 9), 
+      name,
+      order: get().activities.length
+    };
     const updatedActivities = [...get().activities, newActivity];
     
     set({ activities: updatedActivities });
@@ -58,8 +62,14 @@ const useStore = create((set, get) => ({
   deleteActivity: (id) => {
     const updatedActivities = get().activities.filter(activity => activity.id !== id);
     
-    set({ activities: updatedActivities });
-    saveActivities(updatedActivities);
+    // Reorder remaining activities
+    const reorderedActivities = updatedActivities.map((activity, index) => ({
+      ...activity,
+      order: index
+    }));
+    
+    set({ activities: reorderedActivities });
+    saveActivities(reorderedActivities);
     
     // Remove from all daily data
     const dailyData = get().dailyData;
@@ -69,6 +79,52 @@ const useStore = create((set, get) => ({
       }
     });
     set({ dailyData });
+  },
+  
+  // Activity reordering
+  moveActivityUp: (id) => {
+    const activities = get().activities;
+    const currentIndex = activities.findIndex(activity => activity.id === id);
+    
+    if (currentIndex > 0) {
+      const updatedActivities = [...activities];
+      const temp = updatedActivities[currentIndex];
+      updatedActivities[currentIndex] = updatedActivities[currentIndex - 1];
+      updatedActivities[currentIndex - 1] = temp;
+      
+      // Update order property
+      updatedActivities.forEach((activity, index) => {
+        activity.order = index;
+      });
+      
+      set({ activities: updatedActivities });
+      saveActivities(updatedActivities);
+    }
+  },
+  
+  moveActivityDown: (id) => {
+    const activities = get().activities;
+    const currentIndex = activities.findIndex(activity => activity.id === id);
+    
+    if (currentIndex < activities.length - 1) {
+      const updatedActivities = [...activities];
+      const temp = updatedActivities[currentIndex];
+      updatedActivities[currentIndex] = updatedActivities[currentIndex + 1];
+      updatedActivities[currentIndex + 1] = temp;
+      
+      // Update order property
+      updatedActivities.forEach((activity, index) => {
+        activity.order = index;
+      });
+      
+      set({ activities: updatedActivities });
+      saveActivities(updatedActivities);
+    }
+  },
+  
+  // Get sorted activities
+  getSortedActivities: () => {
+    return get().activities.sort((a, b) => a.order - b.order);
   },
   
   // Daily data management
@@ -215,9 +271,10 @@ const useStore = create((set, get) => ({
   
   // Setup default activities
   setupDefaultActivities: () => {
-    const defaultActivities = strings.defaultActivities.map(name => ({
+    const defaultActivities = strings.defaultActivities.map((name, index) => ({
       id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-      name
+      name,
+      order: index
     }));
     
     set({ activities: defaultActivities, isOnboarded: true });

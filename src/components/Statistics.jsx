@@ -5,8 +5,10 @@ import useStore from '../store/useStore';
 import { strings } from '../strings';
 
 const Statistics = () => {
-  const { activities, dailyData, getCompletionRate, getActivityStats } = useStore();
+  const { activities, dailyData, getCompletionRate, getActivityStats, getSortedActivities } = useStore();
   const [timeframe, setTimeframe] = useState('daily');
+
+  const sortedActivities = getSortedActivities();
 
   const stats = useMemo(() => {
     const activityStats = getActivityStats();
@@ -43,7 +45,7 @@ const Statistics = () => {
 
   const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'];
 
-  if (activities.length === 0) {
+  if (sortedActivities.length === 0) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20">
         <div className="max-w-md mx-auto px-4 py-6">

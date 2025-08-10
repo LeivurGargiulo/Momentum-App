@@ -5,8 +5,8 @@ export const strings = {
   settings: 'Settings',
   
   // Onboarding
-  welcome: 'Welcome to Activity Tracker',
-  welcomeSubtitle: 'Track your daily activities for better mental health',
+  welcome: 'Welcome to Momentum',
+  welcomeSubtitle: 'Build momentum, one day at a time',
   getStarted: 'Get Started',
   addActivity: 'Add Activity',
   editActivity: 'Edit Activity',
@@ -62,7 +62,7 @@ export const strings = {
   darkMode: 'Dark Mode',
   lightMode: 'Light Mode',
   about: 'About',
-  version: 'Version 1.0.0',
+  version: 'Version 2.0.0',
   
   // Messages
   dataExported: 'Data exported successfully',
@@ -81,6 +81,6 @@ export const strings = {
   errorImportingData: 'Error importing data',
   
   // About
-  appDescription: 'A personal activity tracker for mental health and therapy use. Track your daily activities, monitor your progress, and maintain healthy habits.',
+  appDescription: 'Momentum helps you build positive habits and track your daily progress. Build momentum, one day at a time.',
   madeWith: 'Made with ❤️ for better mental health',
 };
