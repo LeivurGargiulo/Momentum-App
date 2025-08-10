@@ -284,6 +284,19 @@
     "notificationsNotSupported": "Notificaciones No Soportadas",
     "notificationsNotSupportedDescription": "Tu navegador no soporta notificaciones. Los recordatorios seguirán funcionando pero no mostrarán notificaciones.",
     "limitationsTitle": "Limitaciones de Recordatorios",
-    "limitationsDescription": "Los recordatorios solo funcionan cuando la aplicación está abierta o ejecutándose en segundo plano. Para mejores resultados, mantén la aplicación abierta o instálala como PWA."
+    "limitationsDescription": "Los recordatorios solo funcionan cuando la aplicación está abierta o ejecutándose en segundo plano. Para mejores resultados, mantén la aplicación abierta o instálala como PWA.",
+    "defaultReminders": {
+      "morningCheck": "Revisión Matutina",
+      "morningCheckMessage": "¡Hora de marcar las actividades de hoy!",
+      "eveningReview": "Revisión Vespertina",
+      "eveningReviewMessage": "¿Cómo te fue el día? Revisa tu progreso."
+    },
+    "timeFormat": {
+      "pastDue": "Vencido",
+      "inMinutes": "en {{minutes}} minutos",
+      "inHours": "en {{hours}} hora",
+      "inHoursPlural": "en {{hours}} horas",
+      "inHoursMinutes": "en {{hours}}h {{minutes}}m"
+    }
   }
 }

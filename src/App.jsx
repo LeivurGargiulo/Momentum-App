@@ -23,7 +23,7 @@ function App() {
     setIsInitialized(true);
     
     // Initialize reminders system
-    initializeReminders();
+    initializeReminders(t);
   }, [initialize]);
 
   // Show loading while initializing

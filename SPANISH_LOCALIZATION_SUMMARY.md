@@ -55,7 +55,7 @@ This document summarizes the complete Spanish localization implementation for th
 ✅ **Settings**: All configuration options and data management  
 ✅ **Journal**: Daily reflection interface and timeline  
 ✅ **Mood & Energy**: Tracking interface and analytics  
-✅ **Reminders**: Notification system and scheduling  
+✅ **Reminders**: Complete notification system and scheduling with localized default reminders and time formatting  
 ✅ **PWA Features**: Install prompts, offline indicators, and updates  
 ✅ **Error Messages**: All error handling and user feedback  
 ✅ **Default Activities**: Pre-configured activities in Spanish  
@@ -83,6 +83,12 @@ This document summarizes the complete Spanish localization implementation for th
 
 ### Complete Translation Coverage
 All translation keys now have both English and Spanish versions:
+
+#### Reminders Module Enhancements
+- **Default Reminders**: Morning Check-in and Evening Review now use localized labels and messages
+- **Time Formatting**: All time-related text (e.g., "in 5 minutes", "Past due") is properly localized
+- **Utility Functions**: All reminder utility functions now accept translation function parameter
+- **Components**: Reminders and UpcomingReminders components fully localized
 - Navigation: 3 keys
 - Onboarding: 17 keys
 - Daily Tracking: 12 keys
@@ -99,11 +105,11 @@ All translation keys now have both English and Spanish versions:
 - Activity Manager: 5 keys
 - Share: 7 keys
 - Import: 22 keys
-- Reminders: 25 keys
+- Reminders: 35 keys (including default reminders and time formatting)
 - Date Navigation: 3 keys
 - Default Activities: 10 items
 
-**Total: 221 translation keys + 10 default activities**
+**Total: 231 translation keys + 10 default activities**
 
 ## Technical Implementation
 
@@ -166,15 +172,21 @@ The app now has a robust foundation for adding new languages:
 ## Files Modified
 
 ### Translation Files
-- `src/locales/en.json` - Added missing English keys
-- `src/locales/es.json` - Added complete Spanish translations
+- `src/locales/en.json` - Added missing English keys and reminder localization
+- `src/locales/es.json` - Added complete Spanish translations and reminder localization
 
 ### Components
 - `src/components/JournalTimeline.jsx` - Added Spanish locale support
 - `src/components/Today.jsx` - Added Spanish locale support
+- `src/components/Reminders.jsx` - Updated to use localized reminder functions
+- `src/components/UpcomingReminders.jsx` - Updated to use localized time formatting
+- `src/App.jsx` - Updated to pass translation function to reminder initialization
 
 ### Store
 - `src/store/useStore.js` - Updated default activities to use translation files
+
+### Utilities
+- `src/utils/reminders.js` - Complete refactor to support localization for default reminders and time formatting
 
 ### Documentation
 - `README.md` - Added comprehensive localization section

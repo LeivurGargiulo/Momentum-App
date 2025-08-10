@@ -284,6 +284,19 @@
     "notificationsNotSupported": "Notifications Not Supported",
     "notificationsNotSupportedDescription": "Your browser doesn't support notifications. Reminders will still work but won't show notifications.",
     "limitationsTitle": "Reminder Limitations",
-    "limitationsDescription": "Reminders only work when the app is open or running in the background. For best results, keep the app open or install it as a PWA."
+    "limitationsDescription": "Reminders only work when the app is open or running in the background. For best results, keep the app open or install it as a PWA.",
+    "defaultReminders": {
+      "morningCheck": "Morning Check-in",
+      "morningCheckMessage": "Time to check off today's activities!",
+      "eveningReview": "Evening Review",
+      "eveningReviewMessage": "How did your day go? Review your progress."
+    },
+    "timeFormat": {
+      "pastDue": "Past due",
+      "inMinutes": "in {{minutes}} minutes",
+      "inHours": "in {{hours}} hour",
+      "inHoursPlural": "in {{hours}} hours",
+      "inHoursMinutes": "in {{hours}}h {{minutes}}m"
+    }
   }
 }
