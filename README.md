@@ -6,7 +6,8 @@ A beautiful, mobile-first activity tracking app built with React, Tailwind CSS, 
 
 ### 🎯 **Activity Management**
 - **Add, Edit, Remove Activities**: Full CRUD operations for your daily activities
-- **Drag & Drop Reordering**: Reorder activities with up/down buttons
+- **Drag & Drop Reordering**: Intuitive drag and drop interface for reordering activities
+- **Visual Feedback**: Smooth animations and visual cues during drag operations
 - **Persistent Storage**: All changes saved to localStorage automatically
 - **Historical Data Preservation**: Deleting activities keeps historical data intact
 
@@ -35,6 +36,7 @@ A beautiful, mobile-first activity tracking app built with React, Tailwind CSS, 
 - **Recharts** - Beautiful charts and visualizations
 - **Lucide React** - Modern icon library
 - **Date-fns** - Date manipulation utilities
+- **@dnd-kit** - Modern drag and drop library
 - **Vite** - Fast build tool and dev server
 
 ## Getting Started
@@ -98,6 +100,8 @@ src/
 The app uses a centralized state management system with Zustand. Activities are stored with an `order` property to maintain their sequence. The `ActivityManager` component provides a modal interface for managing activities with:
 
 - **Add**: Quick form to add new activities
+- **Drag & Drop**: Intuitive drag and drop reordering using @dnd-kit library
+- **Visual Feedback**: Smooth animations and drag overlays for better UX
 - **Edit**: Inline editing with save/cancel options
 - **Delete**: Confirmation dialog with historical data preservation
 - **Reorder**: Up/down buttons for reordering activities

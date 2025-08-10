@@ -1,9 +1,89 @@
 import { useState } from 'react';
 import { format } from 'date-fns';
-import { ChevronLeft, ChevronRight, Calendar, CheckCircle, Circle, Save, Plus } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Calendar, CheckCircle, Circle, Save, Plus, GripVertical } from 'lucide-react';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragOverlay,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import {
+  useSortable,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import useStore from '../store/useStore';
 import { strings } from '../strings';
 import ActivityManager from './ActivityManager';
+
+// Sortable Activity Item Component for Today
+const SortableTodayActivityItem = ({ activity, isCompleted, onToggle }) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: activity.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`sortable-item w-full flex items-center gap-3 p-4 rounded-lg transition-all duration-200 ${
+        isCompleted
+          ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800'
+          : 'bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600'
+      } ${isDragging ? 'shadow-lg' : ''}`}
+    >
+      {/* Drag Handle */}
+      <div
+        {...attributes}
+        {...listeners}
+        className="drag-handle p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+      >
+        <GripVertical className="w-4 h-4" />
+      </div>
+
+      {/* Activity Content */}
+      <button
+        onClick={onToggle}
+        className="flex items-center gap-3 flex-1"
+      >
+        <div className="flex-shrink-0">
+          {isCompleted ? (
+            <CheckCircle className="w-6 h-6 text-green-600 dark:text-green-400 animate-bounce-in" />
+          ) : (
+            <Circle className="w-6 h-6 text-gray-400 dark:text-gray-500" />
+          )}
+        </div>
+        <span
+          className={`text-left flex-1 ${
+            isCompleted
+              ? 'text-green-800 dark:text-green-200 line-through'
+              : 'text-gray-900 dark:text-white'
+          }`}
+        >
+          {activity.name}
+        </span>
+      </button>
+    </div>
+  );
+};
 
 const Today = () => {
   const {
@@ -16,6 +96,7 @@ const Today = () => {
     goToNextDay,
     goToToday,
     getSortedActivities,
+    reorderActivities,
   } = useStore();
 
   const dateKey = format(currentDate, 'yyyy-MM-dd');
@@ -25,8 +106,17 @@ const Today = () => {
   const [notes, setNotes] = useState(currentData.notes);
   const [isSavingNotes, setIsSavingNotes] = useState(false);
   const [showActivityManager, setShowActivityManager] = useState(false);
+  const [activeId, setActiveId] = useState(null);
 
   const sortedActivities = getSortedActivities();
+
+  // DnD sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   const handleToggleActivity = (activityId) => {
     toggleActivity(activityId);
@@ -36,6 +126,22 @@ const Today = () => {
     setIsSavingNotes(true);
     updateNotes(notes);
     setTimeout(() => setIsSavingNotes(false), 1000);
+  };
+
+  const handleDragStart = (event) => {
+    setActiveId(event.active.id);
+  };
+
+  const handleDragEnd = (event) => {
+    const { active, over } = event;
+    setActiveId(null);
+
+    if (active.id !== over.id) {
+      const oldIndex = sortedActivities.findIndex(activity => activity.id === active.id);
+      const newIndex = sortedActivities.findIndex(activity => activity.id === over.id);
+      
+      reorderActivities(oldIndex, newIndex);
+    }
   };
 
   const completionRate = sortedActivities.length > 0 
@@ -140,40 +246,48 @@ const Today = () => {
               </button>
             </div>
           ) : (
-            <div className="space-y-3">
-              {sortedActivities.map((activity) => {
-                const isCompleted = currentData.completed.includes(activity.id);
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragStart={handleDragStart}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext
+                items={sortedActivities.map(activity => activity.id)}
+                strategy={verticalListSortingStrategy}
+              >
+                <div className="space-y-3">
+                  {sortedActivities.map((activity) => {
+                    const isCompleted = currentData.completed.includes(activity.id);
+                    
+                    return (
+                      <SortableTodayActivityItem
+                        key={activity.id}
+                        activity={activity}
+                        isCompleted={isCompleted}
+                        onToggle={() => handleToggleActivity(activity.id)}
+                      />
+                    );
+                  })}
+                                  </div>
+                </SortableContext>
                 
-                return (
-                  <button
-                    key={activity.id}
-                    onClick={() => handleToggleActivity(activity.id)}
-                    className={`w-full flex items-center gap-3 p-4 rounded-lg transition-all duration-200 ${
-                      isCompleted
-                        ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800'
-                        : 'bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600'
-                    }`}
-                  >
-                    <div className="flex-shrink-0">
-                      {isCompleted ? (
-                        <CheckCircle className="w-6 h-6 text-green-600 dark:text-green-400 animate-bounce-in" />
-                      ) : (
-                        <Circle className="w-6 h-6 text-gray-400 dark:text-gray-500" />
-                      )}
+                <DragOverlay>
+                  {activeId ? (
+                    <div className="flex items-center gap-3 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border-2 border-blue-300 dark:border-blue-600 shadow-lg">
+                      <div className="p-1 text-blue-400">
+                        <GripVertical className="w-4 h-4" />
+                      </div>
+                      <div className="flex items-center gap-3 flex-1">
+                        <Circle className="w-6 h-6 text-gray-400" />
+                        <span className="text-blue-900 dark:text-blue-100 font-medium">
+                          {sortedActivities.find(activity => activity.id === activeId)?.name}
+                        </span>
+                      </div>
                     </div>
-                    <span
-                      className={`text-left flex-1 ${
-                        isCompleted
-                          ? 'text-green-800 dark:text-green-200 line-through'
-                          : 'text-gray-900 dark:text-white'
-                      }`}
-                    >
-                      {activity.name}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
+                  ) : null}
+                </DragOverlay>
+              </DndContext>
           )}
         </div>
 

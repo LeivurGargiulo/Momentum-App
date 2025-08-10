@@ -25,3 +25,42 @@
     @apply w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100;
   }
 }
+
+@layer utilities {
+  .animate-bounce-in {
+    animation: bounceIn 0.3s ease-out;
+  }
+  
+  @keyframes bounceIn {
+    0% {
+      transform: scale(0.3);
+      opacity: 0;
+    }
+    50% {
+      transform: scale(1.05);
+    }
+    70% {
+      transform: scale(0.9);
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  
+  .drag-handle {
+    @apply cursor-grab active:cursor-grabbing transition-transform duration-150;
+  }
+  
+  .drag-handle:hover {
+    @apply scale-110;
+  }
+  
+  .sortable-item {
+    @apply transition-all duration-200 ease-in-out;
+  }
+  
+  .sortable-item:hover {
+    @apply shadow-md;
+  }
+}

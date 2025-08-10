@@ -122,6 +122,25 @@ const useStore = create((set, get) => ({
     }
   },
   
+  // Drag and drop reordering
+  reorderActivities: (oldIndex, newIndex) => {
+    const activities = get().activities;
+    
+    if (oldIndex === newIndex) return;
+    
+    const updatedActivities = [...activities];
+    const [movedActivity] = updatedActivities.splice(oldIndex, 1);
+    updatedActivities.splice(newIndex, 0, movedActivity);
+    
+    // Update order property
+    updatedActivities.forEach((activity, index) => {
+      activity.order = index;
+    });
+    
+    set({ activities: updatedActivities });
+    saveActivities(updatedActivities);
+  },
+  
   // Get sorted activities
   getSortedActivities: () => {
     return get().activities.sort((a, b) => a.order - b.order);
