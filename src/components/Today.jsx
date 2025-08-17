@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { format } from 'date-fns';
+import { format, differenceInDays } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { es as esLocale } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight, Calendar, CheckCircle, Circle, Save, Plus, GripVertical, Heart, Battery } from 'lucide-react';
@@ -96,30 +96,34 @@ const Today = () => {
     currentDate,
     dailyData,
     toggleActivity,
-    updateNotes,
     updateMood,
     updateEnergy,
     updateJournal,
     goToPreviousDay,
     goToNextDay,
     goToToday,
-    getSortedActivities,
+    getActivitiesForDate,
     reorderActivities,
   } = useStore();
 
   const dateKey = format(currentDate, 'yyyy-MM-dd');
   const currentData = dailyData[dateKey] || { completed: [], notes: '', mood: null, energy: null, journal: '' };
   const isToday = format(new Date(), 'yyyy-MM-dd') === dateKey;
+  
+  // Calculate the difference in days from today
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const currentDateNormalized = new Date(currentDate);
+  currentDateNormalized.setHours(0, 0, 0, 0);
+  const dayDifference = differenceInDays(currentDateNormalized, today);
 
-  const [notes, setNotes] = useState(currentData.notes);
-  const [isSavingNotes, setIsSavingNotes] = useState(false);
   const [showActivityManager, setShowActivityManager] = useState(false);
   const [activeId, setActiveId] = useState(null);
   const [selectedMood, setSelectedMood] = useState(currentData.mood);
   const [selectedEnergy, setSelectedEnergy] = useState(currentData.energy);
   const [isJournalEditing, setIsJournalEditing] = useState(false);
 
-  const sortedActivities = getSortedActivities();
+  const sortedActivities = getActivitiesForDate(currentDate);
 
   // DnD sensors
   const sensors = useSensors(
@@ -133,11 +137,6 @@ const Today = () => {
     toggleActivity(activityId);
   };
 
-  const handleSaveNotes = () => {
-    setIsSavingNotes(true);
-    updateNotes(notes);
-    setTimeout(() => setIsSavingNotes(false), 1000);
-  };
 
   const handleMoodChange = (mood) => {
     setSelectedMood(mood);
@@ -235,7 +234,10 @@ const Today = () => {
               onClick={goToToday}
               className="w-full btn-secondary text-sm"
             >
-              {t('dateNavigation.nextDay')}
+              {dayDifference === -1 || dayDifference === 1 
+                ? t('dateNavigation.today')
+                : t('dateNavigation.goToToday')
+              }
             </button>
           )}
         </div>

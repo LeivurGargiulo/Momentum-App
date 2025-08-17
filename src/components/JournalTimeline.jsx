@@ -66,7 +66,7 @@ const JournalTimeline = ({ entries, onDateClick }) => {
         </div>
       ) : (
         <div className="space-y-4">
-          {filteredEntries.map((entry, index) => (
+          {filteredEntries.map((entry) => (
             <div
               key={entry.date}
               className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors cursor-pointer"

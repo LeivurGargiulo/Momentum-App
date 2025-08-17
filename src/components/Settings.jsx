@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Moon, Sun, Download, Upload, Trash2, Heart, Info, Settings as SettingsIcon, AlertCircle, CheckCircle, Bell } from 'lucide-react';
+import { Moon, Sun, Download, Upload, Trash2, Heart, Info, Settings as SettingsIcon, AlertCircle, CheckCircle, Bell, RefreshCw, HardDrive } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import useStore from '../store/useStore';
 import { exportData, importData as importDataUtil, clearAllData, generateBackupFilename, validateBackupData, detectConflicts } from '../utils/storage';
@@ -7,6 +7,8 @@ import ActivityManager from './ActivityManager';
 import LanguageSwitcher from './LanguageSwitcher';
 import ImportConflictResolver from './ImportConflictResolver';
 import Reminders from './Reminders';
+import SyncModal from './SyncModal';
+import BackupModal from './BackupModal';
 
 const Settings = () => {
   const { t } = useTranslation();
@@ -17,6 +19,8 @@ const Settings = () => {
   const [showActivityManager, setShowActivityManager] = useState(false);
   const [showConflictResolver, setShowConflictResolver] = useState(false);
   const [showReminders, setShowReminders] = useState(false);
+  const [showSyncModal, setShowSyncModal] = useState(false);
+  const [showBackupModal, setShowBackupModal] = useState(false);
   const [importConflicts, setImportConflicts] = useState(null);
   const [importData, setImportData] = useState(null);
   const [notification, setNotification] = useState(null);
@@ -274,6 +278,53 @@ const Settings = () => {
           </div>
         </div>
 
+        {/* Sync Between Devices */}
+        <div className="card p-6 mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <RefreshCw className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+              <div>
+                <h3 className="font-semibold text-gray-900 dark:text-white">
+                  {t('sync.title')}
+                </h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  {t('sync.description')}
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => setShowSyncModal(true)}
+              className="btn-primary px-4 py-2 text-sm"
+            >
+              {t('sync.syncDevices')}
+            </button>
+          </div>
+        </div>
+
+        {/* Local Backups */}
+        <div className="card p-6 mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <HardDrive className="w-6 h-6 text-green-600 dark:text-green-400" />
+              <div>
+                <h3 className="font-semibold text-gray-900 dark:text-white">
+                  {t('backup.title')}
+                </h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  {t('backup.description')}
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => setShowBackupModal(true)}
+              className="btn-primary px-4 py-2 text-sm"
+            >
+              {t('backup.manage')}
+            </button>
+          </div>
+        </div>
+
+
         {/* Data Management */}
         <div className="card p-6 mb-6">
           <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
@@ -412,6 +463,19 @@ const Settings = () => {
         isOpen={showReminders} 
         onClose={() => setShowReminders(false)} 
       />
+
+      {/* Sync Modal */}
+      <SyncModal 
+        isOpen={showSyncModal} 
+        onClose={() => setShowSyncModal(false)} 
+      />
+
+      {/* Backup Modal */}
+      <BackupModal 
+        isOpen={showBackupModal} 
+        onClose={() => setShowBackupModal(false)} 
+      />
+
     </div>
   );
 };

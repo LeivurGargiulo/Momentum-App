@@ -10,7 +10,6 @@ import Navigation from './components/Navigation';
 import PWAInstallPrompt from './components/PWAInstallPrompt';
 import OfflineIndicator from './components/OfflineIndicator';
 import UpdateNotification from './components/UpdateNotification';
-import PWATest from './components/PWATest';
 
 function App() {
   const { t } = useTranslation();
@@ -24,7 +23,7 @@ function App() {
     
     // Initialize reminders system
     initializeReminders(t);
-  }, [initialize]);
+  }, [initialize, t]);
 
   // Show loading while initializing
   if (!isInitialized) {
@@ -46,7 +45,6 @@ function App() {
         <PWAInstallPrompt />
         <OfflineIndicator />
         <UpdateNotification />
-        {import.meta.env.DEV && <PWATest />}
       </div>
     );
   }
@@ -74,7 +72,6 @@ function App() {
       <PWAInstallPrompt />
       <OfflineIndicator />
       <UpdateNotification />
-      {import.meta.env.DEV && <PWATest />}
     </div>
   );
 }

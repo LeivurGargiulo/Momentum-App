@@ -20,9 +20,11 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import useStore from '../store/useStore';
+import DaySelector from './DaySelector';
+import { getActiveDaysString } from '../utils/dayUtils';
 
 // Sortable Activity Item Component
-const SortableActivityItem = ({ activity, editingId, editingName, onStartEdit, onSaveEdit, onCancelEdit, onDelete, onEditingNameChange }) => {
+const SortableActivityItem = ({ activity, editingId, editingName, editingDays, onStartEdit, onSaveEdit, onCancelEdit, onDelete, onEditingNameChange, onEditingDaysChange, t }) => {
   const {
     attributes,
     listeners,
@@ -55,21 +57,32 @@ const SortableActivityItem = ({ activity, editingId, editingName, onStartEdit, o
         <GripVertical className="w-4 h-4" />
       </div>
 
-      {/* Activity Name */}
+      {/* Activity Content */}
       <div className="flex-1">
         {editingId === activity.id ? (
-          <input
-            type="text"
-            value={editingName}
-            onChange={onEditingNameChange}
-            className="w-full px-3 py-2 border border-blue-500 rounded-lg bg-white dark:bg-gray-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            onKeyPress={(e) => e.key === 'Enter' && onSaveEdit()}
-            autoFocus
-          />
+          <div className="space-y-3">
+            <input
+              type="text"
+              value={editingName}
+              onChange={onEditingNameChange}
+              className="w-full px-3 py-2 border border-blue-500 rounded-lg bg-white dark:bg-gray-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              onKeyPress={(e) => e.key === 'Enter' && onSaveEdit()}
+              autoFocus
+            />
+            <DaySelector
+              activeDays={editingDays}
+              onChange={onEditingDaysChange}
+            />
+          </div>
         ) : (
-          <span className="text-gray-900 dark:text-white font-medium">
-            {activity.name}
-          </span>
+          <div>
+            <span className="text-gray-900 dark:text-white font-medium">
+              {activity.name}
+            </span>
+            <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              {getActiveDaysString(activity, t)}
+            </div>
+          </div>
         )}
       </div>
 
@@ -122,8 +135,10 @@ const ActivityManager = ({ isOpen, onClose }) => {
   } = useStore();
   
   const [newActivityName, setNewActivityName] = useState('');
+  const [newActivityDays, setNewActivityDays] = useState('all');
   const [editingId, setEditingId] = useState(null);
   const [editingName, setEditingName] = useState('');
+  const [editingDays, setEditingDays] = useState('all');
   const [showAddForm, setShowAddForm] = useState(false);
   const [activeId, setActiveId] = useState(null);
 
@@ -139,8 +154,9 @@ const ActivityManager = ({ isOpen, onClose }) => {
 
   const handleAddActivity = () => {
     if (newActivityName.trim()) {
-      addActivity(newActivityName.trim());
+      addActivity(newActivityName.trim(), newActivityDays);
       setNewActivityName('');
+      setNewActivityDays('all');
       setShowAddForm(false);
     }
   };
@@ -148,19 +164,22 @@ const ActivityManager = ({ isOpen, onClose }) => {
   const handleStartEdit = (activity) => {
     setEditingId(activity.id);
     setEditingName(activity.name);
+    setEditingDays(activity.activeDays || 'all');
   };
 
   const handleSaveEdit = () => {
     if (editingName.trim()) {
-      updateActivity(editingId, editingName.trim());
+      updateActivity(editingId, editingName.trim(), editingDays);
       setEditingId(null);
       setEditingName('');
+      setEditingDays('all');
     }
   };
 
   const handleCancelEdit = () => {
     setEditingId(null);
     setEditingName('');
+    setEditingDays('all');
   };
 
   const handleDeleteActivity = (id) => {
@@ -211,20 +230,24 @@ const ActivityManager = ({ isOpen, onClose }) => {
               <h3 className="font-semibold text-gray-900 dark:text-white mb-3">
                 {t('activityManager.addNewActivity')}
               </h3>
-              <div className="flex gap-2 mb-3">
+              <div className="space-y-3 mb-3">
                 <input
                   type="text"
                   value={newActivityName}
                   onChange={(e) => setNewActivityName(e.target.value)}
                   placeholder={t('activityManager.activityNamePlaceholder')}
-                  className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   onKeyPress={(e) => e.key === 'Enter' && handleAddActivity()}
                   autoFocus
+                />
+                <DaySelector
+                  activeDays={newActivityDays}
+                  onChange={setNewActivityDays}
                 />
                 <button
                   onClick={handleAddActivity}
                   disabled={!newActivityName.trim()}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {t('onboarding.addActivity')}
                 </button>
@@ -279,11 +302,14 @@ const ActivityManager = ({ isOpen, onClose }) => {
                       index={index}
                       editingId={editingId}
                       editingName={editingName}
+                      editingDays={editingDays}
                       onStartEdit={handleStartEdit}
                       onSaveEdit={handleSaveEdit}
                       onCancelEdit={handleCancelEdit}
                       onDelete={handleDeleteActivity}
                       onEditingNameChange={(e) => setEditingName(e.target.value)}
+                      onEditingDaysChange={setEditingDays}
+                      t={t}
                     />
                   ))}
                 </div>

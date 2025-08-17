@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Bell, Clock, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { getUpcomingReminders, formatTimeUntil } from '../utils/reminders';
@@ -8,18 +8,18 @@ const UpcomingReminders = () => {
   const [upcomingReminders, setUpcomingReminders] = useState([]);
   const [isVisible, setIsVisible] = useState(true);
 
+  const updateUpcomingReminders = useCallback(() => {
+    const upcoming = getUpcomingReminders(t);
+    setUpcomingReminders(upcoming);
+  }, [t]);
+
   useEffect(() => {
     updateUpcomingReminders();
     
     // Update every minute
     const interval = setInterval(updateUpcomingReminders, 60000);
     return () => clearInterval(interval);
-  }, []);
-
-  const updateUpcomingReminders = () => {
-    const upcoming = getUpcomingReminders(t);
-    setUpcomingReminders(upcoming);
-  };
+  }, [updateUpcomingReminders]);
 
   // Only show if there are upcoming reminders and component is visible
   if (upcomingReminders.length === 0 || !isVisible) {

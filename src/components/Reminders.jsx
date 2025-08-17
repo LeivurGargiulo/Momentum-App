@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { 
   Bell, 
   Plus, 
@@ -42,6 +42,16 @@ const Reminders = ({ isOpen, onClose }) => {
   });
 
   // Load reminders and check notification support on mount
+  const loadRemindersData = useCallback(() => {
+    const loadedReminders = loadReminders(t);
+    setReminders(loadedReminders);
+  }, [t]);
+
+  const updateUpcomingReminders = useCallback(() => {
+    const upcoming = getUpcomingReminders(t);
+    setUpcomingReminders(upcoming);
+  }, [t]);
+
   useEffect(() => {
     loadRemindersData();
     
@@ -59,19 +69,7 @@ const Reminders = ({ isOpen, onClose }) => {
     // Update upcoming reminders every minute
     const interval = setInterval(updateUpcomingReminders, 60000);
     return () => clearInterval(interval);
-  }, []);
-
-  const loadRemindersData = () => {
-    const loadedReminders = loadReminders(t);
-    setReminders(loadedReminders);
-  };
-
-
-
-  const updateUpcomingReminders = () => {
-    const upcoming = getUpcomingReminders(t);
-    setUpcomingReminders(upcoming);
-  };
+  }, [loadRemindersData, updateUpcomingReminders]);
 
   const handleRequestPermission = async () => {
     try {

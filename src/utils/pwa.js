@@ -5,10 +5,9 @@ export const registerSW = async () => {
   if ('serviceWorker' in navigator) {
     try {
       const registration = await navigator.serviceWorker.register('/sw.js');
-      console.log('SW registered: ', registration);
       return registration;
     } catch (registrationError) {
-      console.log('SW registration failed: ', registrationError);
+      // Service worker registration failed silently
     }
   }
 };
@@ -22,8 +21,7 @@ export const checkForUpdates = async () => {
       const newWorker = registration.installing;
       newWorker.addEventListener('statechange', () => {
         if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-          // New content is available
-          console.log('New content is available');
+          // New content is available - could trigger update notification
         }
       });
     });

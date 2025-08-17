@@ -56,7 +56,7 @@ export const createReminder = (label, time, message = '', t) => {
     label,
     time,
     enabled: true,
-    message: message || `Time for: ${label}`
+    message: message || t('reminders.defaultMessage', { label })
   };
   
   const updatedReminders = [...reminders, newReminder];

@@ -332,9 +332,9 @@ export const clearAllData = () => {
 };
 
 // Generate backup filename with timestamp
-export const generateBackupFilename = () => {
+export const generateBackupFilename = (prefix = 'momentum_backup') => {
   const now = new Date();
   const dateStr = now.toISOString().split('T')[0];
   const timeStr = now.toTimeString().split(' ')[0].replace(/:/g, '-');
-  return `momentum_backup_${dateStr}_${timeStr}.json`;
+  return `${prefix}_${dateStr}_${timeStr}.json`;
 };

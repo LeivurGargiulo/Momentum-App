@@ -1,5 +1,9 @@
 import { create } from 'zustand';
 import { formatDateKey, loadActivities, saveActivities, loadDailyData, saveDailyData, loadSettings, saveSettings } from '../utils/storage';
+import { getActivitiesForDate, normalizeActiveDays, getDefaultActiveDays } from '../utils/dayUtils';
+import { updateLastDataChange, markOfflineUsage } from '../utils/offline';
+import enTranslations from '../locales/en.json';
+import esTranslations from '../locales/es.json';
 
 const useStore = create((set, get) => ({
   // State
@@ -11,12 +15,26 @@ const useStore = create((set, get) => ({
   
   // Initialize store
   initialize: () => {
-    const activities = loadActivities();
+    const loadedActivities = loadActivities();
     const settings = loadSettings();
-    const isOnboarded = activities.length > 0;
+    const isOnboarded = loadedActivities.length > 0;
+    
+    // Migrate existing activities to include activeDays property
+    const migratedActivities = loadedActivities.map(activity => ({
+      ...activity,
+      activeDays: activity.activeDays ? normalizeActiveDays(activity.activeDays) : getDefaultActiveDays()
+    }));
+    
+    // Save migrated activities if any changes were made
+    const needsMigration = migratedActivities.some((activity, index) => 
+      !loadedActivities[index].activeDays
+    );
+    if (needsMigration) {
+      saveActivities(migratedActivities);
+    }
     
     set({ 
-      activities, 
+      activities: migratedActivities, 
       settings, 
       isOnboarded,
       currentDate: new Date()
@@ -32,16 +50,19 @@ const useStore = create((set, get) => ({
   },
   
   // Activity management
-  addActivity: (name) => {
+  addActivity: (name, activeDays = getDefaultActiveDays()) => {
     const newActivity = { 
       id: Date.now().toString() + Math.random().toString(36).substr(2, 9), 
       name,
-      order: get().activities.length
+      order: get().activities.length,
+      activeDays: normalizeActiveDays(activeDays)
     };
     const updatedActivities = [...get().activities, newActivity];
     
     set({ activities: updatedActivities });
     saveActivities(updatedActivities);
+    updateLastDataChange();
+    markOfflineUsage();
     
     // If this is the first activity, mark as onboarded
     if (get().activities.length === 1) {
@@ -49,13 +70,19 @@ const useStore = create((set, get) => ({
     }
   },
   
-  updateActivity: (id, name) => {
+  updateActivity: (id, name, activeDays) => {
     const updatedActivities = get().activities.map(activity =>
-      activity.id === id ? { ...activity, name } : activity
+      activity.id === id ? { 
+        ...activity, 
+        name,
+        ...(activeDays !== undefined && { activeDays: normalizeActiveDays(activeDays) })
+      } : activity
     );
     
     set({ activities: updatedActivities });
     saveActivities(updatedActivities);
+    updateLastDataChange();
+    markOfflineUsage();
   },
   
   deleteActivity: (id) => {
@@ -69,6 +96,8 @@ const useStore = create((set, get) => ({
     
     set({ activities: reorderedActivities });
     saveActivities(reorderedActivities);
+    updateLastDataChange();
+    markOfflineUsage();
     
     // Remove from all daily data
     const dailyData = get().dailyData;
@@ -145,6 +174,25 @@ const useStore = create((set, get) => ({
     return get().activities.sort((a, b) => a.order - b.order);
   },
   
+  // Get activities for a specific date (filtered by day of week)
+  getActivitiesForDate: (date) => {
+    const sortedActivities = get().getSortedActivities();
+    return getActivitiesForDate(sortedActivities, date);
+  },
+  
+  // Update activity days specifically
+  updateActivityDays: (id, activeDays) => {
+    const updatedActivities = get().activities.map(activity =>
+      activity.id === id ? { 
+        ...activity, 
+        activeDays: normalizeActiveDays(activeDays)
+      } : activity
+    );
+    
+    set({ activities: updatedActivities });
+    saveActivities(updatedActivities);
+  },
+  
   // Daily data management
   loadDailyData: (date) => {
     const dateKey = formatDateKey(date);
@@ -175,6 +223,8 @@ const useStore = create((set, get) => ({
     }));
     
     saveDailyData(dateKey, updatedData);
+    updateLastDataChange();
+    markOfflineUsage();
   },
   
   updateEnergy: (energy) => {
@@ -194,6 +244,8 @@ const useStore = create((set, get) => ({
     }));
     
     saveDailyData(dateKey, updatedData);
+    updateLastDataChange();
+    markOfflineUsage();
   },
   
   updateJournal: (journal) => {
@@ -213,6 +265,8 @@ const useStore = create((set, get) => ({
     }));
     
     saveDailyData(dateKey, updatedData);
+    updateLastDataChange();
+    markOfflineUsage();
   },
   
   toggleActivity: (activityId) => {
@@ -237,6 +291,8 @@ const useStore = create((set, get) => ({
     }));
     
     saveDailyData(dateKey, updatedData);
+    updateLastDataChange();
+    markOfflineUsage();
   },
   
   updateNotes: (notes) => {
@@ -256,6 +312,8 @@ const useStore = create((set, get) => ({
     }));
     
     saveDailyData(dateKey, updatedData);
+    updateLastDataChange();
+    markOfflineUsage();
   },
   
   // Date navigation
@@ -289,6 +347,8 @@ const useStore = create((set, get) => ({
     
     set({ settings: newSettings });
     saveSettings(newSettings);
+    updateLastDataChange();
+    markOfflineUsage();
     
     if (newSettings.darkMode) {
       document.documentElement.classList.add('dark');
@@ -478,7 +538,7 @@ const useStore = create((set, get) => ({
     // For each activity, calculate correlation with mood and energy
     activities.forEach(activity => {
       const activityData = Object.entries(dailyData)
-        .filter(([dateKey, data]) => data.completed.includes(activity.id))
+        .filter(([, data]) => data.completed.includes(activity.id))
         .map(([dateKey, data]) => ({
           date: dateKey,
           mood: data.mood,
@@ -633,14 +693,12 @@ const useStore = create((set, get) => ({
     // Import default activities from the current language
     const currentLanguage = localStorage.getItem('momentum-language') || 'en';
     
-    // Import translation files based on language
+    // Use imported translation files based on language
     let defaultActivities = [];
     try {
       if (currentLanguage === 'es') {
-        const esTranslations = require('../locales/es.json');
         defaultActivities = esTranslations.defaultActivities;
       } else {
-        const enTranslations = require('../locales/en.json');
         defaultActivities = enTranslations.defaultActivities;
       }
     } catch (error) {

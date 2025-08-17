@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 const MoodSelector = ({ selectedMood, onMoodChange, disabled = false }) => {
