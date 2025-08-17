@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { format, differenceInDays } from 'date-fns';
+import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { es as esLocale } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight, Calendar, CheckCircle, Circle, Save, Plus, GripVertical, Heart, Battery } from 'lucide-react';
@@ -115,7 +115,6 @@ const Today = () => {
   today.setHours(0, 0, 0, 0);
   const currentDateNormalized = new Date(currentDate);
   currentDateNormalized.setHours(0, 0, 0, 0);
-  const dayDifference = differenceInDays(currentDateNormalized, today);
 
   const [showActivityManager, setShowActivityManager] = useState(false);
   const [activeId, setActiveId] = useState(null);
@@ -234,10 +233,7 @@ const Today = () => {
               onClick={goToToday}
               className="w-full btn-secondary text-sm"
             >
-              {dayDifference === -1 || dayDifference === 1 
-                ? t('dateNavigation.today')
-                : t('dateNavigation.goToToday')
-              }
+              {t('dateNavigation.goToToday')}
             </button>
           )}
         </div>
