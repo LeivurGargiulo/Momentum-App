@@ -117,4 +117,21 @@
     padding-top: env(safe-area-inset-top);
     padding-bottom: env(safe-area-inset-bottom);
   }
+  
+  /* Touch-friendly button utilities */
+  .touch-manipulation {
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  .touch-button {
+    @apply touch-manipulation;
+    min-height: 44px;
+    min-width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }

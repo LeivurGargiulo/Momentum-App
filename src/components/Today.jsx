@@ -200,7 +200,8 @@ const Today = () => {
           <div className="flex items-center justify-between mb-4">
             <button
               onClick={goToPreviousDay}
-              className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+              onTouchStart={(e) => e.stopPropagation()}
+              className="touch-button p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
             >
               <ChevronLeft className="w-6 h-6" />
             </button>
@@ -221,7 +222,8 @@ const Today = () => {
             
             <button
               onClick={goToNextDay}
-              className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+              onTouchStart={(e) => e.stopPropagation()}
+              className="touch-button p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
             >
               <ChevronRight className="w-6 h-6" />
             </button>
@@ -231,7 +233,8 @@ const Today = () => {
           {!isToday && (
             <button
               onClick={goToToday}
-              className="w-full btn-secondary text-sm"
+              onTouchStart={(e) => e.stopPropagation()}
+              className="w-full btn-secondary text-sm touch-manipulation"
             >
               {t('dateNavigation.goToToday')}
             </button>
@@ -402,7 +405,8 @@ const Today = () => {
       {/* Floating Action Button */}
       <button
         onClick={() => setShowActivityManager(true)}
-        className="fixed bottom-24 right-4 w-14 h-14 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center z-40"
+        onTouchStart={(e) => e.stopPropagation()}
+        className="touch-button fixed bottom-24 right-4 w-14 h-14 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 z-40"
       >
         <Plus className="w-6 h-6" />
       </button>
