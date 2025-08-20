@@ -318,6 +318,22 @@ const useStore = create((set, get) => ({
   
   // Date navigation
   setCurrentDate: (date) => {
+    // Save ALL current day's data before switching dates
+    const currentDateKey = formatDateKey(get().currentDate);
+    const currentData = get().dailyData[currentDateKey];
+    
+    // Save if there's any data (completed activities, notes, journal, mood, or energy)
+    if (currentData && (
+      currentData.completed?.length > 0 || 
+      currentData.notes || 
+      currentData.journal || 
+      currentData.mood || 
+      currentData.energy
+    )) {
+      // Ensure ALL data is persisted to localStorage
+      saveDailyData(currentDateKey, currentData);
+    }
+    
     set({ currentDate: date });
     get().loadDailyData(date);
   },

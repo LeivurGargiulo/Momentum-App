@@ -1,11 +1,12 @@
-import { Calendar, BarChart3, Settings } from 'lucide-react';
+import { Home, Calendar, BarChart3, Settings } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 const Navigation = ({ currentTab, onTabChange }) => {
   const { t } = useTranslation();
 
   const tabs = [
-    { id: 'today', label: t('navigation.today'), icon: Calendar },
+    { id: 'today', label: t('navigation.today'), icon: Home },
+    { id: 'calendar', label: t('navigation.calendar'), icon: Calendar },
     { id: 'stats', label: t('navigation.stats'), icon: BarChart3 },
     { id: 'settings', label: t('navigation.settings'), icon: Settings },
   ];

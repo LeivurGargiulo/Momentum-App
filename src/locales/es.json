@@ -1,6 +1,7 @@
 {
   "navigation": {
     "today": "Hoy",
+    "calendar": "Calendario",
     "stats": "Estadísticas",
     "settings": "Configuración"
   },
@@ -192,6 +193,24 @@
     "activityUpdated": "Actividad actualizada exitosamente",
     "activityDeleted": "Actividad eliminada exitosamente",
     "notesSaved": "Notas guardadas exitosamente"
+  },
+  "calendar": {
+    "previousMonth": "Mes anterior",
+    "nextMonth": "Mes siguiente",
+    "legend": "Leyenda",
+    "tasksCompleted": "Tareas completadas",
+    "moodIndicator": "Indicador de ánimo",
+    "energyLevel": "Nivel de energía",
+    "today": "Hoy",
+    "weekDays": {
+      "mon": "Lun",
+      "tue": "Mar",
+      "wed": "Mié",
+      "thu": "Jue",
+      "fri": "Vie",
+      "sat": "Sáb",
+      "sun": "Dom"
+    }
   },
   "errors": {
     "errorLoadingData": "Error al cargar datos",

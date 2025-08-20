@@ -1,6 +1,7 @@
 {
   "navigation": {
     "today": "Today",
+    "calendar": "Calendar",
     "stats": "Statistics",
     "settings": "Settings"
   },
@@ -192,6 +193,24 @@
     "activityUpdated": "Activity updated successfully",
     "activityDeleted": "Activity deleted successfully",
     "notesSaved": "Notes saved successfully"
+  },
+  "calendar": {
+    "previousMonth": "Previous month",
+    "nextMonth": "Next month",
+    "legend": "Legend",
+    "tasksCompleted": "Tasks completed",
+    "moodIndicator": "Mood indicator",
+    "energyLevel": "Energy level",
+    "today": "Today",
+    "weekDays": {
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat",
+      "sun": "Sun"
+    }
   },
   "errors": {
     "errorLoadingData": "Error loading data",

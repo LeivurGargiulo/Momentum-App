@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BarChart3, TrendingUp, Calendar, BarChart, Flame, Heart, Battery, BookOpen } from 'lucide-react';
 import { BarChart as RechartsBarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
+import { format, parseISO } from 'date-fns';
+import { es } from 'date-fns/locale';
 import useStore from '../store/useStore';
 import ShareStats from './ShareStats';
 import JournalTimeline from './JournalTimeline';
 
 const Statistics = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { 
     activities, 
     getActivityStats, 
@@ -35,6 +37,108 @@ const Statistics = () => {
   
   // Journal Statistics
   const journalStats = getJournalStats(journalTimeRange);
+  
+  // Custom tooltip for activity bar chart
+  const ActivityTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-white dark:bg-gray-800 p-2 border border-gray-200 dark:border-gray-700 rounded shadow-lg">
+          <p className="text-sm font-medium text-gray-900 dark:text-white">
+            {payload[0].payload.name}
+          </p>
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            {t('statistics.completed')}: {payload[0].value}
+          </p>
+        </div>
+      );
+    }
+    return null;
+  };
+  
+  // Custom tooltip for pie chart
+  const PieTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-white dark:bg-gray-800 p-2 border border-gray-200 dark:border-gray-700 rounded shadow-lg">
+          <p className="text-sm font-medium text-gray-900 dark:text-white">
+            {payload[0].name}
+          </p>
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            {payload[0].value.toFixed(1)}%
+          </p>
+        </div>
+      );
+    }
+    return null;
+  };
+  
+  // Custom tooltip for mood chart
+  const MoodTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      const moodLabels = {
+        1: t('mood.sad'),
+        2: t('mood.frustrated'),
+        3: t('mood.anxious'),
+        4: t('mood.tired'),
+        5: t('mood.neutral'),
+        6: t('mood.calm'),
+        7: t('mood.happy'),
+        8: t('mood.excited')
+      };
+      const formattedDate = format(parseISO(payload[0].payload.date), 'PPP', { 
+        locale: i18n.language === 'es' ? es : undefined 
+      });
+      return (
+        <div className="bg-white dark:bg-gray-800 p-2 border border-gray-200 dark:border-gray-700 rounded shadow-lg">
+          <p className="text-sm font-medium text-gray-900 dark:text-white">
+            {formattedDate}
+          </p>
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            {t('mood.howAreYouFeeling')}: {moodLabels[Math.round(payload[0].value)]}
+          </p>
+        </div>
+      );
+    }
+    return null;
+  };
+  
+  // Custom tooltip for energy chart
+  const EnergyTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      const energyLabels = {
+        1: t('energy.veryLow'),
+        2: t('energy.low'),
+        3: t('energy.medium'),
+        4: t('energy.high'),
+        5: t('energy.veryHigh')
+      };
+      const formattedDate = format(parseISO(payload[0].payload.date), 'PPP', { 
+        locale: i18n.language === 'es' ? es : undefined 
+      });
+      return (
+        <div className="bg-white dark:bg-gray-800 p-2 border border-gray-200 dark:border-gray-700 rounded shadow-lg">
+          <p className="text-sm font-medium text-gray-900 dark:text-white">
+            {formattedDate}
+          </p>
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            {t('energy.howIsYourEnergy')}: {energyLabels[payload[0].value]}
+          </p>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  // Format date for charts based on locale
+  const formatChartDate = (dateString) => {
+    try {
+      return format(parseISO(dateString), 'MMM d', { 
+        locale: i18n.language === 'es' ? es : undefined 
+      });
+    } catch {
+      return dateString;
+    }
+  };
 
   // Prepare data for charts
   const barChartData = activityStats.map(activity => ({
@@ -380,7 +484,7 @@ const Statistics = () => {
                     fontSize={12}
                   />
                   <YAxis />
-                  <Tooltip />
+                  <Tooltip content={<ActivityTooltip />} />
                   <Bar dataKey="completed" fill="#3B82F6" />
                 </RechartsBarChart>
               </ResponsiveContainer>
@@ -411,7 +515,7 @@ const Statistics = () => {
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
-                <Tooltip />
+                <Tooltip content={<PieTooltip />} />
               </PieChart>
             </ResponsiveContainer>
             <div className="text-center mt-4">
@@ -435,17 +539,17 @@ const Statistics = () => {
                   {t('statistics.moodTrend')}
                 </h3>
                 <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={moodStats.moodTrend}>
+                  <LineChart data={moodStats.moodTrend.map(item => ({...item, displayDate: formatChartDate(item.date)}))}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis 
-                      dataKey="date" 
+                      dataKey="displayDate" 
                       angle={-45}
                       textAnchor="end"
                       height={80}
                       fontSize={12}
                     />
                     <YAxis domain={[1, 8]} />
-                    <Tooltip />
+                    <Tooltip content={<MoodTooltip />} />
                     <Line 
                       type="monotone" 
                       dataKey="moodValue" 
@@ -465,17 +569,17 @@ const Statistics = () => {
                   {t('statistics.energyTrend')}
                 </h3>
                 <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={energyStats.energyTrend}>
+                  <LineChart data={energyStats.energyTrend.map(item => ({...item, displayDate: formatChartDate(item.date)}))}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis 
-                      dataKey="date" 
+                      dataKey="displayDate" 
                       angle={-45}
                       textAnchor="end"
                       height={80}
                       fontSize={12}
                     />
                     <YAxis domain={[1, 5]} />
-                    <Tooltip />
+                    <Tooltip content={<EnergyTooltip />} />
                     <Line 
                       type="monotone" 
                       dataKey="energy" 
