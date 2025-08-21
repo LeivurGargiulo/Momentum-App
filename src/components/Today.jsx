@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { es as esLocale } from 'date-fns/locale';
@@ -92,23 +92,74 @@ const SortableTodayActivityItem = ({ activity, isCompleted, onToggle }) => {
 
 const Today = () => {
   const { t } = useTranslation();
-  const {
-    currentDate,
-    dailyData,
-    toggleActivity,
-    updateMood,
-    updateEnergy,
-    updateJournal,
-    goToPreviousDay,
-    goToNextDay,
-    goToToday,
-    getActivitiesForDate,
-    reorderActivities,
-  } = useStore();
+  
+  // Use local state for current date to ensure reliable updates
+  const [currentDate, setCurrentDate] = useState(() => useStore.getState().currentDate);
+  
+  // Get store data and functions
+  const dailyData = useStore(state => state.dailyData);
+  const toggleActivity = useStore(state => state.toggleActivity);
+  const updateMood = useStore(state => state.updateMood);
+  const updateEnergy = useStore(state => state.updateEnergy);
+  const updateJournal = useStore(state => state.updateJournal);
+  const getActivitiesForDate = useStore(state => state.getActivitiesForDate);
+  const reorderActivities = useStore(state => state.reorderActivities);
+  const loadDailyData = useStore(state => state.loadDailyData);
+  
+  // Sync local state with store
+  useEffect(() => {
+    useStore.setState({ currentDate });
+    loadDailyData(currentDate);
+  }, [currentDate, loadDailyData]);
+  
+  // Navigation functions
+  const goToPreviousDay = () => {
+    const newDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - 1);
+    setCurrentDate(newDate);
+  };
+  
+  const goToNextDay = () => {
+    const newDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 1);
+    setCurrentDate(newDate);
+  };
+  
+  const goToToday = () => {
+    setCurrentDate(new Date());
+  };
+  
+  // Touch/swipe handling
+  const [touchStart, setTouchStart] = useState(null);
+  const [touchEnd, setTouchEnd] = useState(null);
+  
+  const minSwipeDistance = 50;
+  
+  const onTouchStart = (e) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+  
+  const onTouchMove = (e) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+  
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+    
+    if (isLeftSwipe) {
+      goToNextDay(); // Swipe left = next day
+    } else if (isRightSwipe) {
+      goToPreviousDay(); // Swipe right = previous day
+    }
+  };
 
   const dateKey = format(currentDate, 'yyyy-MM-dd');
   const currentData = dailyData[dateKey] || { completed: [], notes: '', mood: null, energy: null, journal: '' };
   const isToday = format(new Date(), 'yyyy-MM-dd') === dateKey;
+  
   
   // Calculate the difference in days from today
   const today = new Date();
@@ -182,7 +233,12 @@ const Today = () => {
     : 0;
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20">
+    <div 
+      className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20"
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
+    >
       {/* Header */}
       <div className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-md mx-auto px-4 py-4">
@@ -200,7 +256,6 @@ const Today = () => {
           <div className="flex items-center justify-between mb-4">
             <button
               onClick={goToPreviousDay}
-              onTouchStart={(e) => e.stopPropagation()}
               className="touch-button p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
             >
               <ChevronLeft className="w-6 h-6" />
@@ -222,7 +277,6 @@ const Today = () => {
             
             <button
               onClick={goToNextDay}
-              onTouchStart={(e) => e.stopPropagation()}
               className="touch-button p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
             >
               <ChevronRight className="w-6 h-6" />
@@ -233,7 +287,6 @@ const Today = () => {
           {!isToday && (
             <button
               onClick={goToToday}
-              onTouchStart={(e) => e.stopPropagation()}
               className="w-full btn-secondary text-sm touch-manipulation"
             >
               {t('dateNavigation.goToToday')}
@@ -405,7 +458,6 @@ const Today = () => {
       {/* Floating Action Button */}
       <button
         onClick={() => setShowActivityManager(true)}
-        onTouchStart={(e) => e.stopPropagation()}
         className="touch-button fixed bottom-24 right-4 w-14 h-14 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 z-40"
       >
         <Plus className="w-6 h-6" />

@@ -339,19 +339,23 @@ const useStore = create((set, get) => ({
   },
   
   goToPreviousDay: () => {
-    const newDate = new Date(get().currentDate);
-    newDate.setDate(newDate.getDate() - 1);
-    get().setCurrentDate(newDate);
+    const currentDate = get().currentDate;
+    const newDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - 1);
+    set({ currentDate: newDate });
+    get().loadDailyData(newDate);
   },
   
   goToNextDay: () => {
-    const newDate = new Date(get().currentDate);
-    newDate.setDate(newDate.getDate() + 1);
-    get().setCurrentDate(newDate);
+    const currentDate = get().currentDate;
+    const newDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 1);
+    set({ currentDate: newDate });
+    get().loadDailyData(newDate);
   },
   
   goToToday: () => {
-    get().setCurrentDate(new Date());
+    const today = new Date();
+    set({ currentDate: today });
+    get().loadDailyData(today);
   },
   
   // Settings
