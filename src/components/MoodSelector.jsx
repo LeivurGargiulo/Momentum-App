@@ -25,7 +25,7 @@ const MoodSelector = ({ selectedMood, onMoodChange, disabled = false }) => {
           <button
             key={mood.value}
             type="button"
-            onClick={() => !disabled && onMoodChange(mood.value)}
+            onClick={() => !disabled && onMoodChange(selectedMood === mood.value ? null : mood.value)}
             disabled={disabled}
             className={`
               flex flex-col items-center justify-center p-3 rounded-lg border-2 transition-all duration-200
@@ -47,6 +47,19 @@ const MoodSelector = ({ selectedMood, onMoodChange, disabled = false }) => {
           </button>
         ))}
       </div>
+      
+      {selectedMood && (
+        <div className="flex justify-center mt-2">
+          <button
+            type="button"
+            onClick={() => !disabled && onMoodChange(null)}
+            disabled={disabled}
+            className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 underline"
+          >
+            {t('mood.clearSelection')}
+          </button>
+        </div>
+      )}
     </div>
   );
 };

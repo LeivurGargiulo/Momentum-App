@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, startOfWeek, endOfWeek, addMonths, subMonths } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -8,9 +8,23 @@ import { formatDateKey } from '../utils/storage';
 
 const Calendar = () => {
   const { t, i18n } = useTranslation();
-  const { dailyData, activities, setCurrentDate } = useStore();
+  const { dailyData, activities, setCurrentDate, getActivitiesForDate, loadDailyData } = useStore();
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
+
+  // Load daily data for all visible days when month changes
+  useEffect(() => {
+    const monthStart = startOfMonth(currentMonth);
+    const monthEnd = endOfMonth(monthStart);
+    const startDate = startOfWeek(monthStart, { weekStartsOn: 1 });
+    const endDate = endOfWeek(monthEnd, { weekStartsOn: 1 });
+    const visibleDays = eachDayOfInterval({ start: startDate, end: endDate });
+    
+    // Load data for all visible days
+    visibleDays.forEach(day => {
+      loadDailyData(day);
+    });
+  }, [currentMonth, loadDailyData]);
 
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(monthStart);
@@ -102,8 +116,11 @@ const Calendar = () => {
             const isCurrentMonth = isSameMonth(day, currentMonth);
             const isSelected = isSameDay(day, selectedDate);
             const isToday = isSameDay(day, new Date());
-            const completedCount = dayData.completed.length;
-            const totalActivities = activities.length;
+            const activitiesForDay = getActivitiesForDate(day);
+            const totalActivities = activitiesForDay.length;
+            // Only count completed activities that were actually active on this day
+            const activeDayActivityIds = activitiesForDay.map(activity => activity.id);
+            const completedCount = dayData.completed.filter(id => activeDayActivityIds.includes(id)).length;
 
             return (
               <button

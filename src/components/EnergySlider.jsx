@@ -26,7 +26,7 @@ const EnergySlider = ({ energyLevel, onEnergyChange, disabled = false }) => {
             <button
               key={level.value}
               type="button"
-              onClick={() => !disabled && onEnergyChange(level.value)}
+              onClick={() => !disabled && onEnergyChange(energyLevel === level.value ? null : level.value)}
               disabled={disabled}
               className={`
                 flex-1 flex flex-col items-center justify-center p-3 rounded-lg border-2 transition-all duration-200
@@ -71,6 +71,14 @@ const EnergySlider = ({ energyLevel, onEnergyChange, disabled = false }) => {
           <span className="ml-2 text-sm text-gray-500 dark:text-gray-400">
             ({energyLevels.find(l => l.value === energyLevel)?.label})
           </span>
+          <button
+            type="button"
+            onClick={() => !disabled && onEnergyChange(null)}
+            disabled={disabled}
+            className="ml-3 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 underline"
+          >
+            {t('energy.clearSelection')}
+          </button>
         </div>
       )}
     </div>

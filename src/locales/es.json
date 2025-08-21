@@ -87,7 +87,8 @@
     "high": "Alta",
     "veryHigh": "Muy Alta",
     "currentLevel": "Nivel de energía actual",
-    "energy": "energía"
+    "energy": "energía",
+    "clearSelection": "Borrar"
   },
   "mood": {
     "howAreYouFeeling": "¿Cómo te sientes hoy?",
@@ -98,7 +99,8 @@
     "neutral": "Neutral",
     "excited": "Emocionado",
     "tired": "Cansado",
-    "frustrated": "Frustrado"
+    "frustrated": "Frustrado",
+    "clearSelection": "Borrar"
   },
   "statistics": {
     "title": "Estadísticas",
